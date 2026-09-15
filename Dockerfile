@@ -7,22 +7,26 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
-# Install system dependencies if required (e.g. for audio/speech processing if needed)
+# Install system dependencies (e.g. for audio/speech processing and FFmpeg)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ffmpeg \
     espeak \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements and install Python dependencies
+# Copy requirements file
 COPY requirements.txt .
-RUN pip install --no-cache-dir gunicorn
+
+# Install CPU-only PyTorch to save build time and RAM
+RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu
+
+# Install remaining dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy application files
+# Copy application code
 COPY . .
 
-# Expose Hugging Face default port
+# Expose default port
 EXPOSE 7860
 
-# Run the app with Gunicorn on port 7860
+# Run with Gunicorn
 CMD ["gunicorn", "--bind", "0.0.0.0:7860", "--workers", "1", "--threads", "2", "--timeout", "120", "wsgi:app"]
