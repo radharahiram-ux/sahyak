@@ -1,0 +1,772 @@
+{% extends "base.html" %}
+
+{% block title %}Career Growth Recommendation - Sahayak{% endblock %}
+
+{% block content %}
+<style>
+  /* ═══════ Design Tokens ═══════ */
+  :root {
+    --g-emerald: #059669;
+    --g-emerald-dark: #047857;
+    --g-emerald-light: #d1fae5;
+    --g-emerald-50: #ecfdf5;
+    --g-teal: #0d9488;
+    --g-lime: #84cc16;
+    --g-amber: #f59e0b;
+    --g-rose: #f43f5e;
+    --g-slate-900: #0f172a;
+    --g-slate-800: #1e293b;
+    --g-slate-700: #334155;
+    --g-slate-100: #f1f5f9;
+    --g-slate-50: #f8fafc;
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+    --radius-2xl: 24px;
+    --shadow-card: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.04);
+    --shadow-hover: 0 4px 12px rgba(0,0,0,.08), 0 8px 32px rgba(0,0,0,.06);
+    --shadow-glow: 0 0 40px rgba(5,150,105,.15);
+    --transition: .25s cubic-bezier(.4,0,.2,1);
+  }
+
+  /* ═══════ Background ═══════ */
+  .career-page {
+    background: linear-gradient(168deg, #f0fdf4 0%, #ecfdf5 30%, #f8fafc 60%, #f1f5f9 100%);
+    min-height: 100vh;
+    position: relative;
+  }
+  .career-page::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(5,150,105,.07), transparent);
+    pointer-events: none;
+  }
+
+  /* ═══════ Entrance Animations ═══════ */
+  @keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeSlideDown {
+    from { opacity: 0; transform: translateY(-16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes scaleIn {
+    from { opacity: 0; transform: scale(.92); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  @keyframes countUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+  @keyframes barGrow {
+    from { width: 0%; }
+  }
+  @keyframes pulseGlow {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(5,150,105,.3); }
+    50% { box-shadow: 0 0 0 8px rgba(5,150,105,0); }
+  }
+  @keyframes progressFill {
+    from { stroke-dashoffset: 251.2; }
+  }
+
+  .anim-fade-up {
+    animation: fadeSlideUp .6s var(--transition) both;
+  }
+  .anim-scale {
+    animation: scaleIn .5s var(--transition) both;
+  }
+
+  /* Stagger delays for stat cards */
+  .stagger-1 { animation-delay: .1s; }
+  .stagger-2 { animation-delay: .2s; }
+  .stagger-3 { animation-delay: .3s; }
+  .stagger-4 { animation-delay: .4s; }
+  .stagger-5 { animation-delay: .5s; }
+  .stagger-6 { animation-delay: .55s; }
+
+  /* ═══════ Card Hover ═══════ */
+  .stat-card {
+    transition: transform var(--transition), box-shadow var(--transition);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+  }
+  .stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
+  }
+
+  /* ═══════ Skeleton Loading ═══════ */
+  .skeleton {
+    background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: var(--radius-md);
+  }
+
+  /* ═══════ Income Bar ═══════ */
+  .income-bar-track {
+    position: relative;
+    height: 14px;
+    background: #e2e8f0;
+    border-radius: 7px;
+    overflow: visible;
+  }
+  .income-bar-fill {
+    height: 100%;
+    border-radius: 7px;
+    background: linear-gradient(90deg, var(--g-emerald), var(--g-teal));
+    animation: barGrow .8s var(--transition) both;
+    animation-delay: .4s;
+    position: relative;
+  }
+  .income-bar-current {
+    position: absolute;
+    top: -6px;
+    width: 3px;
+    height: 26px;
+    background: var(--g-rose);
+    border-radius: 2px;
+    z-index: 2;
+  }
+
+  /* ═══════ Skill Radial ═══════ */
+  .radial-ring {
+    transform: rotate(-90deg);
+  }
+  .radial-bg { stroke: #e2e8f0; }
+  .radial-fill {
+    stroke: var(--g-emerald);
+    transition: stroke-dashoffset 1s var(--transition);
+    animation: progressFill 1s var(--transition) both;
+    animation-delay: .5s;
+  }
+
+  /* ═══════ Tag Chips ═══════ */
+  .skill-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    transition: transform var(--transition), box-shadow var(--transition);
+  }
+  .skill-chip:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,.08);
+  }
+  .skill-chip--owned {
+    background: var(--g-emerald-light);
+    color: var(--g-emerald-dark);
+    border: 1px solid rgba(5,150,105,.2);
+  }
+  .skill-chip--gap {
+    background: #fef3c7;
+    color: #92400e;
+    border: 1px solid rgba(245,158,11,.2);
+  }
+
+  /* ═══════ Job Pill ═══════ */
+  .job-pill {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: var(--radius-md);
+    padding: 12px 16px;
+    transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+  }
+  .job-pill:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+    border-color: var(--g-emerald);
+  }
+
+  /* ═══════ AI Callout ═══════ */
+  .ai-callout {
+    background: linear-gradient(135deg, #ecfdf5, #f0fdf4, #fefce8);
+    border: 2px solid rgba(5,150,105,.15);
+    border-radius: var(--radius-xl);
+    position: relative;
+    overflow: hidden;
+  }
+  .ai-callout::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(180deg, var(--g-emerald), var(--g-teal));
+    border-radius: 4px 0 0 4px;
+  }
+
+  /* ═══════ Quiz-style Form ═══════ */
+  .quiz-input {
+    border: 2px solid #e2e8f0;
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    font-size: 15px;
+    transition: border-color var(--transition), box-shadow var(--transition);
+    background: white;
+    width: 100%;
+    outline: none;
+  }
+  .quiz-input:focus {
+    border-color: var(--g-emerald);
+    box-shadow: 0 0 0 3px rgba(5,150,105,.1);
+  }
+  .quiz-label {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--g-slate-700);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* ═══════ CTA Button ═══════ */
+  .cta-btn {
+    background: linear-gradient(135deg, var(--g-emerald), var(--g-teal));
+    color: white;
+    font-weight: 700;
+    font-size: 16px;
+    border: none;
+    border-radius: var(--radius-md);
+    padding: 16px 32px;
+    cursor: pointer;
+    transition: transform var(--transition), box-shadow var(--transition);
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .cta-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(5,150,105,.25);
+  }
+  .cta-btn:active {
+    transform: translateY(0);
+  }
+
+  /* ═══════ Quick-pick Button ═══════ */
+  .quick-btn {
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    border: 1.5px solid #d1d5db;
+    background: white;
+    color: var(--g-slate-700);
+    cursor: pointer;
+    transition: all var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .quick-btn:hover {
+    border-color: var(--g-emerald);
+    color: var(--g-emerald-dark);
+    background: var(--g-emerald-50);
+    transform: translateY(-1px);
+  }
+
+  /* ═══════ Reveal Section ═══════ */
+  .reveal-hero {
+    background: linear-gradient(135deg, var(--g-slate-900) 0%, #064e3b 50%, var(--g-emerald-dark) 100%);
+    border-radius: var(--radius-2xl);
+    position: relative;
+    overflow: hidden;
+  }
+  .reveal-hero::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 60%;
+    height: 200%;
+    background: radial-gradient(ellipse, rgba(16,185,129,.12), transparent 70%);
+    pointer-events: none;
+  }
+
+  /* ═══════ Section Icon Circle ═══════ */
+  .icon-circle {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  /* ═══════ Counter Animation ═══════ */
+  .counter-value {
+    display: inline-block;
+    animation: countUp .4s var(--transition) both;
+  }
+</style>
+
+<div class="career-page relative">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 py-10 relative z-10">
+
+  <!-- ═══ Page Header ═══ -->
+  <div class="text-center mb-12 anim-fade-up">
+    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-bold tracking-wide mb-4"
+         style="background: var(--g-emerald-light); color: var(--g-emerald-dark);">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+      AI-POWERED CAREER NAVIGATOR
+    </div>
+    <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-3" style="color: var(--g-slate-900);">
+      Discover Your Next<br>
+      <span style="background: linear-gradient(135deg, var(--g-emerald), var(--g-teal)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Career Breakthrough</span>
+    </h1>
+    <p class="text-lg max-w-xl mx-auto" style="color: var(--g-slate-700);">
+      Get a personalized career upgrade path, training plan, and AI-generated insights tailored to your background.
+    </p>
+  </div>
+
+  <!-- ═══ Step 1 — Input Quiz ═══ -->
+  <div class="bg-white rounded-2xl p-8 md:p-10 mb-12 anim-fade-up stagger-1"
+       style="box-shadow: var(--shadow-card); border: 1px solid #e2e8f0;">
+    <div class="flex items-center gap-3 mb-8">
+      <div class="icon-circle" style="background: var(--g-emerald-light);">
+        <svg class="w-5 h-5" style="color: var(--g-emerald);" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+      </div>
+      <div>
+        <h2 class="text-xl font-extrabold" style="color: var(--g-slate-900);">Tell us about yourself</h2>
+        <p class="text-sm" style="color: var(--g-slate-700);">We'll match you to a higher-paying career path.</p>
+      </div>
+    </div>
+
+    <form id="recommendationForm">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div>
+          <label class="quiz-label">
+            <svg class="w-4 h-4" style="color: var(--g-emerald);" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+            Current Occupation
+          </label>
+          <input type="text" id="occupationInput" list="occupationList" placeholder="e.g. Electrician" required class="quiz-input">
+          <datalist id="occupationList">
+            {% for occ in occupations %}<option value="{{ occ }}"></option>{% endfor %}
+          </datalist>
+        </div>
+        <div>
+          <label class="quiz-label">
+            <svg class="w-4 h-4" style="color: var(--g-emerald);" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8V7m0 10v1"/></svg>
+            Monthly Income (Rs.)
+          </label>
+          <input type="number" id="incomeInput" placeholder="20000" min="5000" required class="quiz-input" value="20000">
+        </div>
+        <div>
+          <label class="quiz-label">
+            <svg class="w-4 h-4" style="color: var(--g-emerald);" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+            Income Goal (Rs./mo)
+          </label>
+          <input type="number" id="incomeGoalInput" placeholder="45000" min="5000" class="quiz-input" value="45000">
+        </div>
+        <div>
+          <label class="quiz-label">
+            <svg class="w-4 h-4" style="color: var(--g-emerald);" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            Years of Experience
+          </label>
+          <input type="number" id="experienceInput" placeholder="2" min="0" max="40" step="0.5" class="quiz-input" value="2">
+        </div>
+        <div>
+          <label class="quiz-label">
+            <svg class="w-4 h-4" style="color: var(--g-emerald);" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+            Current Skills
+          </label>
+          <input type="text" id="skillsInput" placeholder="electrical wiring, circuit safety" class="quiz-input">
+        </div>
+        <div>
+          <label class="quiz-label">
+            <svg class="w-4 h-4" style="color: var(--g-emerald);" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            Location
+          </label>
+          <input type="text" id="locationInput" placeholder="Raipur Urban" class="quiz-input" value="Raipur">
+        </div>
+      </div>
+
+      <!-- Quick Picks -->
+      <div class="mb-8">
+        <p class="text-xs font-bold uppercase tracking-wider mb-3" style="color: #94a3b8;">Try a demo profile:</p>
+        <div class="flex flex-wrap gap-2">
+          <button type="button" onclick="quickFill('Electrician',22000,45000,2,'electrical wiring, circuit safety')" class="quick-btn">Electrician</button>
+          <button type="button" onclick="quickFill('Delivery worker',18000,38000,1.5,'route optimization, fleet dispatch')" class="quick-btn">Delivery Worker</button>
+          <button type="button" onclick="quickFill('Plumber',20000,42000,2,'pipe fitting, leak repair')" class="quick-btn">Plumber</button>
+          <button type="button" onclick="quickFill('Tailor',16000,35000,1,'stitching, fabric cutting')" class="quick-btn">Tailor</button>
+          <button type="button" onclick="quickFill('Construction worker',17000,35000,2,'surface leveling, masonry')" class="quick-btn">Construction Worker</button>
+          <button type="button" onclick="quickFill('Driver',20000,45000,3,'vehicle driving, route navigation')" class="quick-btn">Driver</button>
+        </div>
+      </div>
+
+      <button type="submit" id="submitBtn" class="cta-btn">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+        Find My Career Upgrade
+      </button>
+    </form>
+  </div>
+
+  <!-- ═══ Skeleton Loading State ═══ -->
+  <div id="loadingState" class="hidden mb-12 space-y-6">
+    <div class="skeleton" style="height: 200px; width: 100%;"></div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="skeleton" style="height: 120px;"></div>
+      <div class="skeleton" style="height: 120px;"></div>
+      <div class="skeleton" style="height: 120px;"></div>
+      <div class="skeleton" style="height: 120px;"></div>
+    </div>
+    <div class="skeleton" style="height: 160px; width: 100%;"></div>
+  </div>
+
+  <!-- ═══ Unmapped Role Notice ═══ -->
+  <div id="unmappedState" class="hidden mb-12 anim-scale">
+    <div class="bg-white rounded-2xl p-8 text-center" style="box-shadow: var(--shadow-card); border: 2px solid #fde68a;">
+      <div class="icon-circle mx-auto mb-4" style="background: #fef3c7; width: 56px; height: 56px;">
+        <svg class="w-7 h-7" style="color: #f59e0b;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+      </div>
+      <h3 class="text-xl font-bold mb-2" style="color: var(--g-slate-900);">No Recommendation Available Yet</h3>
+      <p id="unmappedMessage" class="text-base" style="color: var(--g-slate-700);">We don't have a structured upgrade path for this role yet.</p>
+    </div>
+  </div>
+
+  <!-- ═══ Error State ═══ -->
+  <div id="errorState" class="hidden mb-12 anim-scale">
+    <div class="bg-white rounded-2xl p-8 text-center" style="box-shadow: var(--shadow-card); border: 2px solid #fecaca;">
+      <div class="icon-circle mx-auto mb-4" style="background: #fee2e2; width: 56px; height: 56px;">
+        <svg class="w-7 h-7" style="color: var(--g-rose);" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      </div>
+      <h3 class="text-xl font-bold mb-2" style="color: var(--g-slate-900);">Something went wrong</h3>
+      <p id="errorMessage" class="text-base" style="color: var(--g-slate-700);">An unexpected error occurred. Please try again.</p>
+    </div>
+  </div>
+
+  <!-- ═══ Results Section ═══ -->
+  <div id="resultsSection" class="hidden space-y-8">
+
+    <!-- ═══ Step 2 — The Reveal ═══ -->
+    <div class="reveal-hero p-8 md:p-10 text-white anim-scale">
+      <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+        <div class="flex-1">
+          <p class="text-sm font-bold uppercase tracking-widest mb-2" style="color: #6ee7b7;">Recommended Career Transition</p>
+          <h2 id="recommendedTitle" class="text-3xl md:text-4xl lg:text-5xl font-black leading-tight mb-4">
+            Solar Panel Installation
+          </h2>
+          <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm" style="color: #a7f3d0;">
+            <span>From: <strong class="text-white" id="resCurrentRole">Electrician</strong></span>
+            <span class="hidden sm:inline">|</span>
+            <span>Current: <strong class="text-white" id="resCurrentIncome">Rs.20,000/mo</strong></span>
+            <span class="hidden sm:inline">|</span>
+            <span>Target: <strong class="text-white" id="resIncomeGoal">Rs.45,000/mo</strong></span>
+          </div>
+        </div>
+        <div class="lg:text-right flex-shrink-0">
+          <p class="text-xs font-bold uppercase tracking-widest mb-1" style="color: #6ee7b7;">Expected Salary</p>
+          <p id="resIncomeRange" class="text-3xl md:text-4xl font-black" style="color: #86efac;">Rs.38,000 - 60,000</p>
+          <p id="resMonthlyUplift" class="text-sm font-semibold mt-1" style="color: #a7f3d0;">+Rs.18,000/mo minimum gain</p>
+        </div>
+      </div>
+
+      <!-- Income Comparison Bar -->
+      <div class="relative z-10 mt-8 p-5 rounded-xl" style="background: rgba(255,255,255,.08); backdrop-filter: blur(8px);">
+        <div class="flex justify-between text-xs font-semibold mb-2" style="color: #a7f3d0;">
+          <span>Rs.0</span>
+          <span id="barMaxLabel">Rs.60,000</span>
+        </div>
+        <div class="income-bar-track">
+          <div id="incomeBarFill" class="income-bar-fill" style="width: 80%;"></div>
+          <div id="incomeBarCurrent" class="income-bar-current" style="left: 30%;"></div>
+        </div>
+        <div class="flex justify-between text-xs font-semibold mt-2">
+          <span style="color: #fca5a5;">
+            <span class="inline-block w-2 h-2 rounded-full mr-1" style="background: var(--g-rose);"></span>Current
+          </span>
+          <span style="color: #6ee7b7;">
+            <span class="inline-block w-2 h-2 rounded-full mr-1" style="background: var(--g-emerald);"></span>Expected Range
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ Step 3 — Stat Cards Grid ═══ -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+
+      <!-- Training Cost -->
+      <div class="stat-card bg-white p-6 anim-fade-up stagger-1" style="border: 1px solid #e2e8f0;">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-xs font-bold uppercase tracking-wider" style="color: #94a3b8;">Training Cost</span>
+          <div class="icon-circle" style="background: #dbeafe;">
+            <svg class="w-4 h-4" style="color: #3b82f6;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8V7m0 10v1"/></svg>
+          </div>
+        </div>
+        <p id="resTrainingCost" class="text-2xl font-black counter-value" style="color: var(--g-slate-900);">Rs.12,000</p>
+        <p id="resCostNote" class="text-xs mt-1" style="color: #94a3b8;">Vocational course fee</p>
+      </div>
+
+      <!-- Training Duration -->
+      <div class="stat-card bg-white p-6 anim-fade-up stagger-2" style="border: 1px solid #e2e8f0;">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-xs font-bold uppercase tracking-wider" style="color: #94a3b8;">Duration</span>
+          <div class="icon-circle" style="background: #fef3c7;">
+            <svg class="w-4 h-4" style="color: #f59e0b;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          </div>
+        </div>
+        <p id="resTrainingDuration" class="text-2xl font-black counter-value" style="color: var(--g-slate-900);">4.8 weeks</p>
+        <p id="resExpDiscountBadge" class="text-xs mt-1 font-bold inline-block px-2 py-0.5 rounded-full" style="background: var(--g-emerald-light); color: var(--g-emerald-dark);">-20% Exp Discount</p>
+      </div>
+
+      <!-- Local Demand -->
+      <div class="stat-card bg-white p-6 anim-fade-up stagger-3" style="border: 1px solid #e2e8f0;">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-xs font-bold uppercase tracking-wider" style="color: #94a3b8;">Local Demand</span>
+          <div class="icon-circle" style="background: #ccfbf1;">
+            <svg class="w-4 h-4" style="color: var(--g-teal);" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg>
+          </div>
+        </div>
+        <p id="resLocalDemand" class="text-2xl font-black counter-value" style="color: var(--g-teal);">High</p>
+        <p class="text-xs mt-1" style="color: #94a3b8;">In target region</p>
+      </div>
+
+      <!-- ROI & Payback -->
+      <div class="stat-card bg-white p-6 anim-fade-up stagger-4" style="border: 1px solid #e2e8f0;">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-xs font-bold uppercase tracking-wider" style="color: #94a3b8;">Estimated ROI</span>
+          <div class="icon-circle" style="background: var(--g-emerald-light);">
+            <svg class="w-4 h-4" style="color: var(--g-emerald);" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+          </div>
+        </div>
+        <p id="resROI" class="text-2xl font-black counter-value" style="color: var(--g-emerald);">14.0x</p>
+        <p id="resPayback" class="text-xs mt-1 font-bold" style="color: var(--g-emerald-dark);">Payback in 0.8 months</p>
+      </div>
+    </div>
+
+    <!-- Income Goal Status -->
+    <div id="incomeGoalAlert" class="hidden anim-fade-up stagger-5">
+      <div class="flex items-center gap-3 p-4 rounded-xl" style="background: #fffbeb; border: 1px solid #fde68a;">
+        <svg class="w-5 h-5 flex-shrink-0" style="color: #f59e0b;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+        <p id="incomeGoalAlertText" class="text-sm font-semibold" style="color: #92400e;">Income goal note</p>
+      </div>
+    </div>
+
+    <!-- ═══ Two-Column: Skills + Jobs ═══ -->
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+
+      <!-- Left: Skill Match Visualization (3 cols) -->
+      <div class="lg:col-span-3 bg-white rounded-2xl p-6 md:p-8 anim-fade-up stagger-4" style="box-shadow: var(--shadow-card); border: 1px solid #e2e8f0;">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="icon-circle" style="background: var(--g-emerald-light);">
+            <svg class="w-5 h-5" style="color: var(--g-emerald);" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+          </div>
+          <h3 class="text-lg font-extrabold" style="color: var(--g-slate-900);">Skills Assessment</h3>
+        </div>
+
+        <!-- Radial + Legend Side by Side -->
+        <div class="flex flex-col sm:flex-row items-center gap-8 mb-6">
+          <!-- Radial Progress -->
+          <div class="relative flex-shrink-0" style="width: 100px; height: 100px;">
+            <svg viewBox="0 0 100 100" class="radial-ring" style="width: 100px; height: 100px;">
+              <circle cx="50" cy="50" r="40" fill="none" stroke-width="10" class="radial-bg"/>
+              <circle id="skillRadial" cx="50" cy="50" r="40" fill="none" stroke-width="10" class="radial-fill"
+                      stroke-dasharray="251.2" stroke-dashoffset="125.6" stroke-linecap="round"/>
+            </svg>
+            <div class="absolute inset-0 flex items-center justify-center">
+              <span id="skillPercent" class="text-lg font-black" style="color: var(--g-emerald);">50%</span>
+            </div>
+          </div>
+          <div class="flex-1 space-y-2 text-sm">
+            <div class="flex items-center gap-2">
+              <span class="inline-block w-3 h-3 rounded-full" style="background: var(--g-emerald);"></span>
+              <span style="color: var(--g-slate-700);"><strong id="overlapCount">2</strong> skills you already have</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="inline-block w-3 h-3 rounded-full" style="background: var(--g-amber);"></span>
+              <span style="color: var(--g-slate-700);"><strong id="gapCount">2</strong> skills to learn</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Skills You Have -->
+        <div class="mb-4">
+          <p class="text-xs font-bold uppercase tracking-wider mb-2" style="color: var(--g-emerald-dark);">Skills You Have</p>
+          <div id="resSkillOverlapContainer" class="flex flex-wrap gap-2">
+          </div>
+        </div>
+
+        <!-- Skill Gap -->
+        <div>
+          <p class="text-xs font-bold uppercase tracking-wider mb-2" style="color: #92400e;">Skills to Learn</p>
+          <div id="resSkillGapContainer" class="flex flex-wrap gap-2">
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Available Jobs (2 cols) -->
+      <div class="lg:col-span-2 bg-white rounded-2xl p-6 md:p-8 anim-fade-up stagger-5" style="box-shadow: var(--shadow-card); border: 1px solid #e2e8f0;">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="icon-circle" style="background: #dbeafe;">
+            <svg class="w-5 h-5" style="color: #3b82f6;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+          </div>
+          <h3 class="text-lg font-extrabold" style="color: var(--g-slate-900);">Unlocked Roles</h3>
+        </div>
+        <div id="resJobsList" class="space-y-3">
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ Step 4 — AI Explanation ═══ -->
+    <div class="ai-callout p-6 md:p-8 anim-fade-up stagger-6">
+      <div class="pl-4">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="icon-circle" style="background: linear-gradient(135deg, var(--g-emerald), var(--g-teal)); width: 36px; height: 36px;">
+            <svg class="w-4 h-4" style="color: white;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+          </div>
+          <div>
+            <h3 class="text-lg font-extrabold" style="color: var(--g-slate-900);">Why This Recommendation?</h3>
+            <p class="text-xs font-semibold" style="color: var(--g-emerald-dark);">AI-generated personalized insight</p>
+          </div>
+        </div>
+        <div id="resAiExplanation" class="text-base leading-relaxed space-y-3" style="color: var(--g-slate-700);">
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<script>
+function quickFill(occ, inc, goal, exp, skills) {
+  document.getElementById('occupationInput').value = occ;
+  document.getElementById('incomeInput').value = inc;
+  document.getElementById('incomeGoalInput').value = goal;
+  document.getElementById('experienceInput').value = exp;
+  document.getElementById('skillsInput').value = skills;
+}
+
+function formatINR(n) { return n.toLocaleString('en-IN'); }
+
+document.getElementById('recommendationForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  const occ = document.getElementById('occupationInput').value.trim();
+  const inc = parseFloat(document.getElementById('incomeInput').value);
+  const goal = parseFloat(document.getElementById('incomeGoalInput').value) || 0;
+  const exp = parseFloat(document.getElementById('experienceInput').value) || 0;
+  const skills = document.getElementById('skillsInput').value.trim();
+  const loc = document.getElementById('locationInput').value.trim();
+  if (!occ) return;
+
+  document.getElementById('loadingState').classList.remove('hidden');
+  document.getElementById('errorState').classList.add('hidden');
+  document.getElementById('unmappedState').classList.add('hidden');
+  document.getElementById('resultsSection').classList.add('hidden');
+
+  try {
+    const res = await fetch('/api/career-recommendation', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ occupation: occ, current_income: inc, income_goal: goal, experience_years: exp, skills: skills, location: loc })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed');
+
+    if (data.available === false) {
+      document.getElementById('unmappedMessage').innerText = data.message || 'No recommendation available.';
+      document.getElementById('unmappedState').classList.remove('hidden');
+      return;
+    }
+
+    // Reveal hero
+    document.getElementById('recommendedTitle').innerText = data.recommended_career;
+    document.getElementById('resCurrentRole').innerText = data.current_occupation;
+    document.getElementById('resCurrentIncome').innerText = 'Rs.' + formatINR(data.current_income) + '/mo';
+    document.getElementById('resIncomeGoal').innerText = 'Rs.' + formatINR(data.income_goal) + '/mo';
+    document.getElementById('resIncomeRange').innerText = 'Rs.' + formatINR(data.expected_income_range.min) + ' - ' + formatINR(data.expected_income_range.max);
+    const uplift = data.expected_income_range.min - data.current_income;
+    document.getElementById('resMonthlyUplift').innerText = uplift > 0 ? ('+Rs.' + formatINR(uplift) + '/mo minimum gain') : 'Advanced role transition';
+
+    // Income bar
+    const maxInc = data.expected_income_range.max * 1.1;
+    document.getElementById('barMaxLabel').innerText = 'Rs.' + formatINR(Math.round(maxInc));
+    document.getElementById('incomeBarFill').style.width = ((data.expected_income_range.max / maxInc) * 100) + '%';
+    document.getElementById('incomeBarCurrent').style.left = ((data.current_income / maxInc) * 100) + '%';
+
+    // Stat cards
+    document.getElementById('resTrainingCost').innerText = 'Rs.' + formatINR(data.training_cost);
+    document.getElementById('resTrainingDuration').innerText = data.training_duration;
+    const discBadge = document.getElementById('resExpDiscountBadge');
+    if (data.experience_discount_applied) {
+      discBadge.innerText = '-20% Experience Discount';
+      discBadge.style.background = 'var(--g-emerald-light)';
+      discBadge.style.color = 'var(--g-emerald-dark)';
+    } else {
+      discBadge.innerText = 'Standard Duration';
+      discBadge.style.background = '#f1f5f9';
+      discBadge.style.color = '#64748b';
+    }
+    document.getElementById('resLocalDemand').innerText = data.local_job_demand;
+    document.getElementById('resROI').innerText = data.estimated_roi + 'x';
+    document.getElementById('resPayback').innerText = 'Payback in ' + data.payback_period_months + ' months';
+
+    // Income goal alert
+    const goalAlert = document.getElementById('incomeGoalAlert');
+    if (!data.income_goal_met) {
+      document.getElementById('incomeGoalAlertText').innerText = data.income_goal_note;
+      goalAlert.classList.remove('hidden');
+    } else {
+      goalAlert.classList.add('hidden');
+    }
+
+    // Skills radial
+    const totalSkills = data.required_skills.length;
+    const ownedCount = data.skill_overlap ? data.skill_overlap.length : 0;
+    const gapLength = data.skill_gap ? data.skill_gap.length : 0;
+    const pct = totalSkills > 0 ? Math.round((ownedCount / totalSkills) * 100) : 0;
+    document.getElementById('skillPercent').innerText = pct + '%';
+    document.getElementById('overlapCount').innerText = ownedCount;
+    document.getElementById('gapCount').innerText = gapLength;
+    const circumference = 251.2;
+    const offset = circumference - (circumference * pct / 100);
+    const radial = document.getElementById('skillRadial');
+    radial.style.strokeDashoffset = circumference;
+    setTimeout(() => { radial.style.strokeDashoffset = offset; }, 100);
+
+    // Skill chips
+    const overlapC = document.getElementById('resSkillOverlapContainer');
+    overlapC.innerHTML = (data.skill_overlap && data.skill_overlap.length > 0) ?
+      data.skill_overlap.map(s => '<span class="skill-chip skill-chip--owned"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>'+s+'</span>').join('') :
+      '<span style="color:#94a3b8; font-size:13px; font-style:italic;">No direct skill overlap detected</span>';
+
+    const gapC = document.getElementById('resSkillGapContainer');
+    gapC.innerHTML = (data.skill_gap && data.skill_gap.length > 0) ?
+      data.skill_gap.map(s => '<span class="skill-chip skill-chip--gap"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>'+s+'</span>').join('') :
+      '<span style="color:var(--g-emerald-dark); font-size:13px; font-weight:600;">Full skill match! Ready to transition.</span>';
+
+    // Jobs
+    document.getElementById('resJobsList').innerHTML = (data.available_jobs || []).map(j =>
+      '<div class="job-pill flex items-center gap-3"><svg class="w-4 h-4 flex-shrink-0" style="color:var(--g-emerald);" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg><span class="text-sm font-semibold" style="color:var(--g-slate-900);">'+j+'</span></div>'
+    ).join('');
+
+    // AI explanation
+    const expEl = document.getElementById('resAiExplanation');
+    const paras = data.ai_explanation.split('\n\n').filter(p => p.trim());
+    expEl.innerHTML = paras.map(p => '<p>' + p.replace(/\n/g, '<br>') + '</p>').join('');
+
+    document.getElementById('resultsSection').classList.remove('hidden');
+    document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  } catch (err) {
+    document.getElementById('errorMessage').innerText = err.message || 'An error occurred.';
+    document.getElementById('errorState').classList.remove('hidden');
+  } finally {
+    document.getElementById('loadingState').classList.add('hidden');
+  }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,200 @@
+[
+  {
+    "current_occupation": "Electrician",
+    "recommended_career": "Solar panel installation",
+    "required_skills": [
+      "electrical wiring",
+      "circuit safety",
+      "PV system basics",
+      "solar inverter configuration"
+    ],
+    "min_experience_years": 1,
+    "expected_income_min": 38000,
+    "expected_income_max": 60000,
+    "training_cost": 15000,
+    "training_duration_weeks": 6,
+    "available_job_titles": [
+      "Solar Rooftop Installer",
+      "PV Systems Maintenance Technician",
+      "Solar Field Supervisor"
+    ],
+    "local_demand_by_region": {
+      "default": "medium",
+      "urban": "high",
+      "rural": "medium"
+    }
+  },
+  {
+    "current_occupation": "Delivery worker",
+    "recommended_career": "Logistics supervisor",
+    "required_skills": [
+      "route optimization",
+      "warehouse management systems",
+      "fleet dispatch",
+      "team coordination"
+    ],
+    "min_experience_years": 1,
+    "expected_income_min": 32000,
+    "expected_income_max": 48000,
+    "training_cost": 8000,
+    "training_duration_weeks": 4,
+    "available_job_titles": [
+      "Logistics Hub Supervisor",
+      "Last-Mile Fleet Coordinator",
+      "Dispatch Manager"
+    ],
+    "local_demand_by_region": {
+      "default": "high",
+      "urban": "high",
+      "rural": "low"
+    }
+  },
+  {
+    "current_occupation": "Plumber",
+    "recommended_career": "Industrial plumbing",
+    "required_skills": [
+      "high-pressure pipe fitting",
+      "commercial boiler systems",
+      "blueprint reading",
+      "industrial safety standards"
+    ],
+    "min_experience_years": 2,
+    "expected_income_min": 36000,
+    "expected_income_max": 55000,
+    "training_cost": 12000,
+    "training_duration_weeks": 8,
+    "available_job_titles": [
+      "Industrial Pipefitter",
+      "Commercial Plumbing Technician",
+      "Plant Maintenance Plumber"
+    ],
+    "local_demand_by_region": {
+      "default": "high",
+      "urban": "high",
+      "rural": "medium"
+    }
+  },
+  {
+    "current_occupation": "Tailor",
+    "recommended_career": "Computerized embroidery",
+    "required_skills": [
+      "embroidery software design",
+      "multi-needle machine operation",
+      "fabric stabilizer selection",
+      "thread tension adjustment"
+    ],
+    "min_experience_years": 1,
+    "expected_income_min": 28000,
+    "expected_income_max": 45000,
+    "training_cost": 9000,
+    "training_duration_weeks": 5,
+    "available_job_titles": [
+      "Computerized Embroidery Machine Operator",
+      "Apparel Pattern Digitizer",
+      "Textile Design Technician"
+    ],
+    "local_demand_by_region": {
+      "default": "medium",
+      "urban": "high",
+      "rural": "low"
+    }
+  },
+  {
+    "current_occupation": "Construction worker",
+    "recommended_career": "Tile installation",
+    "required_skills": [
+      "surface leveling",
+      "tile cutting & grouting",
+      "waterproofing basics",
+      "marble & vitrified layout"
+    ],
+    "min_experience_years": 1,
+    "expected_income_min": 30000,
+    "expected_income_max": 48000,
+    "training_cost": 8500,
+    "training_duration_weeks": 4,
+    "available_job_titles": [
+      "Master Tile Setter",
+      "Flooring & Marble Installer",
+      "Interior Masonry Specialist"
+    ],
+    "local_demand_by_region": {
+      "default": "high",
+      "urban": "high",
+      "rural": "medium"
+    }
+  },
+  {
+    "current_occupation": "Driver",
+    "recommended_career": "Commercial vehicle maintenance",
+    "required_skills": [
+      "heavy vehicle engine diagnostics",
+      "pneumatic brake systems",
+      "transmission overhaul",
+      "preventive maintenance"
+    ],
+    "min_experience_years": 2,
+    "expected_income_min": 35000,
+    "expected_income_max": 58000,
+    "training_cost": 14000,
+    "training_duration_weeks": 8,
+    "available_job_titles": [
+      "Fleet Maintenance Technician",
+      "Commercial Auto Electrician",
+      "Heavy Transport Mechanic"
+    ],
+    "local_demand_by_region": {
+      "default": "high",
+      "urban": "high",
+      "rural": "medium"
+    }
+  },
+  {
+    "current_occupation": "Mechanic",
+    "recommended_career": "EV (Electric Vehicle) Service Specialist",
+    "required_skills": [
+      "high voltage battery diagnostics",
+      "EV motor service",
+      "OBD scanners",
+      "electrical safety"
+    ],
+    "min_experience_years": 2,
+    "expected_income_min": 40000,
+    "expected_income_max": 65000,
+    "training_cost": 18000,
+    "training_duration_weeks": 8,
+    "available_job_titles": [
+      "EV Powertrain Technician",
+      "Electric Fleet Specialist"
+    ],
+    "local_demand_by_region": {
+      "default": "high",
+      "urban": "high",
+      "rural": "low"
+    }
+  },
+  {
+    "current_occupation": "Security guard",
+    "recommended_career": "Security systems & CCTV installation",
+    "required_skills": [
+      "IP camera wiring",
+      "NVR / DVR configuration",
+      "biometric access systems",
+      "basic network setup"
+    ],
+    "min_experience_years": 1,
+    "expected_income_min": 28000,
+    "expected_income_max": 42000,
+    "training_cost": 8000,
+    "training_duration_weeks": 4,
+    "available_job_titles": [
+      "CCTV Installation Field Technician",
+      "Surveillance Systems Specialist"
+    ],
+    "local_demand_by_region": {
+      "default": "high",
+      "urban": "high",
+      "rural": "low"
+    }
+  }
+]

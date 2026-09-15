@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 py-10 container">
+
+    <div class="text-center mb-10">
+        <button onclick="switchLanguage('en')"
+            class="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition">English</button>
+        <button onclick="switchLanguage('hi')"
+            class="px-4 py-2 bg-gray-200 text-gray-800 font-medium rounded-lg hover:bg-gray-300 transition">हिन्दी</button>
+    </div>
+
+    <h1 class="text-3xl md:text-4xl font-bold text-gray-800 text-center my-20 heading"
+        data-en="Find local jobs on Sahayak" data-hi="सहायक पर स्थानीय नौकरियां खोजें">
+        Find local jobs on Sahayak
+    </h1>
+
+    <form class="flex flex-col sm:flex-row gap-3 justify-center mb-6 search-form" method="GET" id="search-form">
+        <div class="relative w-full sm:w-2/3">
+            <input type="text" name="search" id="search-input" value="{{ search }}"
+                placeholder="Search for jobs (painting, plumbing, etc.)"
+                data-en-placeholder="Search for jobs (painting, plumbing, etc.)"
+                data-hi-placeholder="नौकरी खोजें (पेंटिंग, प्लंबिंग, आदि)"
+                class="w-full px-4 py-2 pr-12 border-4 border-indigo-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm search-input">
+            <button type="button" id="voice-search-btn"
+                class="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer" title="Search with voice">
+                <svg class="w-6 h-6 text-gray-500 hover:text-blue-600 transition-colors" fill="none"
+                    stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z">
+                    </path>
+                </svg>
+            </button>
+        </div>
+        <button type="submit"
+            class="px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition button bg-blue"
+            data-en="Search" data-hi="खोजें">
+            Search
+        </button>
+    </form>
+
+    <!-- Category / Location filters -->
+    <div class="flex flex-wrap gap-3 justify-center mb-10">
+        <select name="category" form="search-form" onchange="document.getElementById('search-form').submit()"
+            class="px-3 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white">
+            <option value="">All categories</option>
+            {% for cat in all_categories %}
+            <option value="{{ cat }}" {% if cat==category %}selected{% endif %}>{{ cat|capitalize }}</option>
+            {% endfor %}
+        </select>
+
+        <select name="location" form="search-form" onchange="document.getElementById('search-form').submit()"
+            class="px-3 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white">
+            <option value="">All locations</option>
+            {% for loc in all_locations %}
+            <option value="{{ loc }}" {% if loc==location %}selected{% endif %}>{{ loc }}</option>
+            {% endfor %}
+        </select>
+
+        {% if category or location %}
+        <a href="{{ url_for('main.home', search=search) }}"
+            class="px-3 py-2 text-sm text-gray-500 hover:text-gray-700 underline self-center">Clear filters</a>
+        {% endif %}
+    </div>
+
+    <div class="job-listings grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 job-grid">
+        {% for job in jobs %}
+        <div class="cursor-pointer border rounded-xl bg-white shadow hover:shadow-lg transition 
+                    overflow-hidden job-card" onclick="location.href='/job/{{ job.id }}'">
+
+            <div class="relative">
+                <img src="{{ url_for('static', filename='images/' ~ job.category ~ '.jpg') }}" alt="{{ job.category }}"
+                    class="w-full h-40 object-cover job-img">
+
+                <!-- Save / Unsave button -->
+                <form method="POST" action="{{ url_for('saved.toggle_save', job_id=job.id) }}"
+                    onsubmit="event.stopPropagation()" class="absolute top-2 right-2">
+                    <input type="hidden" name="next" value="{{ request.full_path }}">
+                    <button type="submit" onclick="event.stopPropagation()"
+                        title="{% if job.id in saved_ids %}Remove from saved{% else %}Save this job{% endif %}"
+                        class="bg-white/90 rounded-full w-9 h-9 flex items-center justify-center shadow hover:bg-white transition">
+                        {% if job.id in saved_ids %}
+                        <span class="text-red-500 text-lg">♥</span>
+                        {% else %}
+                        <span class="text-gray-400 text-lg">♡</span>
+                        {% endif %}
+                    </button>
+                </form>
+            </div>
+
+            <div class="p-5 job-info">
+                <h3 class="text-xl font-semibold text-gray-800 mb-2 job-title" data-en="{{ job.title }}"
+                    data-hi="{{ job.title_hi }}">{{ job.title }}</h3>
+                <p class="text-gray-600 job-employer" data-en="{{ job.employer }}" data-hi="{{ job.employer_hi }}">{{
+                    job.employer }}</p>
+                <p class="text-gray-500 text-sm job-location" data-en="{{ job.location }}"
+                    data-hi="{{ job.location_hi }}">{{ job.location }}</p>
+                <p class="text-green-600 font-medium mt-2 job-salary" data-en="{{ job.salary }}"
+                    data-hi="{{ job.salary_hi }}">{{ job.salary }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% if not jobs %}
+    <p class="text-center text-gray-500 mt-10">No jobs match your search/filters. Try clearing a filter.</p>
+    {% endif %}
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- START: Voice Input Script ---
+        const searchForm = document.getElementById('search-form');
+        const searchInput = document.getElementById('search-input');
+        const voiceSearchBtn = document.getElementById('voice-search-btn');
+        const micIcon = voiceSearchBtn.querySelector('svg');
+
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            console.warn("MediaRecorder is not supported by this browser.");
+            voiceSearchBtn.style.display = 'none';
+            return;
+        }
+
+        let mediaRecorder;
+        let audioChunks = [];
+        let isRecording = false;
+
+        voiceSearchBtn.addEventListener('click', async () => {
+            if (isRecording) {
+                mediaRecorder.stop();
+            } else {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    mediaRecorder = new MediaRecorder(stream);
+
+                    mediaRecorder.onstart = () => {
+                        audioChunks = [];
+                        isRecording = true;
+                        micIcon.classList.add('text-red-500');
+                        searchInput.placeholder = 'Listening... Speak now!';
+                    };
+
+                    mediaRecorder.ondataavailable = event => {
+                        audioChunks.push(event.data);
+                    };
+
+                    mediaRecorder.onstop = async () => {
+                        isRecording = false;
+                        micIcon.classList.remove('text-red-500');
+                        searchInput.placeholder = 'Transcribing...';
+
+                        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                        const formData = new FormData();
+                        formData.append('audio_data', audioBlob);
+
+                        try {
+                            const response = await fetch('/transcribe', {
+                                method: 'POST',
+                                body: formData
+                            });
+
+                            if (!response.ok) {
+                                throw new Error('Server error during transcription.');
+                            }
+
+                            const data = await response.json();
+                            if (data.transcript) {
+                                searchInput.value = data.transcript;
+                                searchForm.submit();
+                            } else {
+                                searchInput.placeholder = data.error || 'Transcription failed.';
+                            }
+                        } catch (error) {
+                            console.error('Error transcribing audio:', error);
+                            searchInput.placeholder = 'Error sending audio.';
+                        }
+                    };
+
+                    mediaRecorder.start();
+
+                } catch (err) {
+                    console.error('Error accessing microphone:', err);
+                    searchInput.placeholder = 'Microphone access denied.';
+                }
+            }
+        });
+        // --- END: Voice Input Script ---
+    });
+
+    // --- Language Switching Script ---
+    function switchLanguage(lang) {
+        const elementsToTranslate = document.querySelectorAll('[data-en]');
+
+        elementsToTranslate.forEach(el => {
+            const translation = (lang === 'hi') ? el.dataset.hi : el.dataset.en;
+            if (translation) {
+                el.innerText = translation;
+            }
+        });
+
+        const searchInput = document.getElementById('search-input');
+        if (lang === 'hi') {
+            searchInput.placeholder = searchInput.dataset.hiPlaceholder;
+        } else {
+            searchInput.placeholder = searchInput.dataset.enPlaceholder;
+        }
+    }
+</script>
+{% endblock %}

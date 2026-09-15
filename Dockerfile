@@ -1,0 +1,28 @@
+FROM python:3.10-slim
+
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PORT=7860
+
+WORKDIR /app
+
+# Install system dependencies if required (e.g. for audio/speech processing if needed)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ffmpeg \
+    espeak \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements and install Python dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir gunicorn
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy application files
+COPY . .
+
+# Expose Hugging Face default port
+EXPOSE 7860
+
+# Run the app with Gunicorn on port 7860
+CMD ["gunicorn", "--bind", "0.0.0.0:7860", "--workers", "1", "--threads", "2", "--timeout", "120", "wsgi:app"]

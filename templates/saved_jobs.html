@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-5xl mx-auto px-4 py-10">
+
+    <h1 class="text-3xl font-bold text-gray-800 mb-6">📌 Saved Jobs</h1>
+
+    {% if jobs %}
+    <div class="space-y-4">
+        {% for job in jobs %}
+        <div class="bg-white shadow rounded-xl p-6 border flex justify-between items-center">
+            <div class="cursor-pointer" onclick="location.href='/job/{{ job.id }}'">
+                <h3 class="text-xl font-semibold text-gray-800">{{ job.title }}</h3>
+                <p class="text-gray-600">{{ job.category }} | {{ job.location }}</p>
+                <p class="text-green-600 font-medium mt-1">{{ job.salary }}</p>
+            </div>
+            <form method="POST" action="{{ url_for('saved.toggle_save', job_id=job.id) }}">
+                <input type="hidden" name="next" value="{{ url_for('saved.saved_jobs') }}">
+                <button type="submit" class="px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
+                    Remove
+                </button>
+            </form>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="text-gray-700">You haven't saved any jobs yet. Browse jobs and tap the ♡ button to bookmark them.</p>
+    {% endif %}
+
+</div>
+{% endblock %}

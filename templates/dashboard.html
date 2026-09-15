@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+{% block title %}Job Market Dashboard - Sahayak{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 py-8">
+
+    <!-- Header Section -->
+    <div class="mb-8">
+        <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight flex items-center gap-2">
+            <span>📊</span> Job Market Overview
+        </h1>
+        <p class="text-gray-600 mt-1">Real-time statistics on active job listings, category distribution, and geographic opportunities.</p>
+    </div>
+
+    <!-- Stat Cards Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
+        <!-- Total Jobs Card -->
+        <div class="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl p-6 text-white shadow-lg shadow-blue-500/20 transform transition hover:-translate-y-1">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-blue-100 text-sm font-semibold uppercase tracking-wider">Total Active Jobs</p>
+                    <h2 class="text-4xl font-extrabold mt-2">{{ total_jobs }}</h2>
+                </div>
+                <div class="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center text-2xl backdrop-blur-sm">
+                    💼
+                </div>
+            </div>
+            <p class="text-xs text-blue-100 mt-4 flex items-center gap-1">
+                <span>⚡</span> Updated in real-time
+            </p>
+        </div>
+
+        <!-- Active Employers Card -->
+        <div class="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl p-6 text-white shadow-lg shadow-emerald-500/20 transform transition hover:-translate-y-1">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-emerald-100 text-sm font-semibold uppercase tracking-wider">Active Employers</p>
+                    <h2 class="text-4xl font-extrabold mt-2">{{ total_employers }}</h2>
+                </div>
+                <div class="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center text-2xl backdrop-blur-sm">
+                    🏢
+                </div>
+            </div>
+            <p class="text-xs text-emerald-100 mt-4 flex items-center gap-1">
+                <span>🤝</span> Local hiring partners
+            </p>
+        </div>
+
+        <!-- Skill Categories Card -->
+        <div class="bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl p-6 text-white shadow-lg shadow-purple-500/20 transform transition hover:-translate-y-1">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-purple-100 text-sm font-semibold uppercase tracking-wider">Skill Categories</p>
+                    <h2 class="text-4xl font-extrabold mt-2">{{ total_categories }}</h2>
+                </div>
+                <div class="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center text-2xl backdrop-blur-sm">
+                    🛠️
+                </div>
+            </div>
+            <p class="text-xs text-purple-100 mt-4 flex items-center gap-1">
+                <span>🎯</span> Diverse blue-collar sectors
+            </p>
+        </div>
+    </div>
+
+    <!-- Charts / Breakdown Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
+        
+        <!-- Top Categories Breakdown -->
+        <div class="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm">
+            <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+                <span>🔧</span> Jobs by Category
+            </h2>
+            <div class="space-y-4">
+                {% for cat, count in top_categories %}
+                {% set pct = (count / max_category_count * 100)|round|int %}
+                <div>
+                    <div class="flex justify-between text-sm font-medium mb-1">
+                        <span class="text-gray-700 capitalize font-semibold">{{ cat }}</span>
+                        <span class="text-gray-500">{{ count }} job{% if count > 1 %}s{% endif %}</span>
+                    </div>
+                    <div class="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
+                        <div class="bg-indigo-600 h-3 rounded-full transition-all duration-500" style="width: {{ pct }}%"></div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Top Locations Breakdown -->
+        <div class="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm">
+            <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+                <span>📍</span> Top Job Locations
+            </h2>
+            <div class="space-y-4">
+                {% for loc, count in top_locations %}
+                {% set pct = (count / max_location_count * 100)|round|int %}
+                <div>
+                    <div class="flex justify-between text-sm font-medium mb-1">
+                        <span class="text-gray-700 font-semibold">{{ loc }}</span>
+                        <span class="text-gray-500">{{ count }} job{% if count > 1 %}s{% endif %}</span>
+                    </div>
+                    <div class="w-full bg-gray-100 rounded-full h-3 overflow-hidden">
+                        <div class="bg-emerald-500 h-3 rounded-full transition-all duration-500" style="width: {{ pct }}%"></div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Jobs Table / List -->
+    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+                <span>✨</span> Recently Added Openings
+            </h2>
+            <a href="{{ url_for('main.home') }}" class="text-sm font-semibold text-blue-600 hover:text-blue-800 transition">
+                View All Jobs →
+            </a>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="border-b border-gray-200 text-xs font-semibold text-gray-500 uppercase">
+                        <th class="py-3 px-4">Title</th>
+                        <th class="py-3 px-4">Category</th>
+                        <th class="py-3 px-4">Employer</th>
+                        <th class="py-3 px-4">Location</th>
+                        <th class="py-3 px-4">Salary</th>
+                        <th class="py-3 px-4 text-right">Action</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100 text-sm">
+                    {% for job in recent_jobs %}
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="py-3.5 px-4 font-semibold text-gray-900">{{ job.title }}</td>
+                        <td class="py-3.5 px-4">
+                            <span class="px-2.5 py-1 text-xs font-semibold bg-blue-50 text-blue-700 rounded-full capitalize">
+                                {{ job.category }}
+                            </span>
+                        </td>
+                        <td class="py-3.5 px-4 text-gray-600">{{ job.employer }}</td>
+                        <td class="py-3.5 px-4 text-gray-600">{{ job.location }}</td>
+                        <td class="py-3.5 px-4 text-emerald-600 font-medium">{{ job.salary }}</td>
+                        <td class="py-3.5 px-4 text-right">
+                            <a href="/job/{{ job.id }}" class="px-3 py-1.5 bg-blue-600 text-white text-xs font-semibold rounded-lg hover:bg-blue-700 transition">
+                                Details
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
