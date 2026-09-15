@@ -7,17 +7,20 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
-# Install system dependencies (e.g. for audio/speech processing and FFmpeg)
+# Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ffmpeg \
     espeak \
     && rm -rf /var/lib/apt/lists/*
 
+# Upgrade pip to latest
+RUN pip install --no-cache-dir --upgrade pip
+
 # Copy requirements file
 COPY requirements.txt .
 
-# Install CPU-only PyTorch to save build time and RAM
-RUN pip install --no-cache-dir torch --index-url https://download.pytorch.org/whl/cpu
+# Install PyTorch CPU using --extra-index-url (keeps PyPI active for build dependencies like flit_core)
+RUN pip install --no-cache-dir torch --extra-index-url https://download.pytorch.org/whl/cpu
 
 # Install remaining dependencies
 RUN pip install --no-cache-dir -r requirements.txt
