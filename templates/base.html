@@ -1,80 +1,245 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="light">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Sahayak - Find Local Jobs{% endblock %}</title>
-    <!-- Fallback CSS
-    <link href="{{ url_for('static', filename='css/fallback.css') }}" rel="stylesheet">
-    -->
-    <!-- Tailwind CDN -->
+    <title>{% block title %}SkillBridge - Bridging Skills to Opportunity{% endblock %}</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        saffron: {
+                            50: '#FEF8F0',
+                            100: '#FDF0DC',
+                            500: '#F59E0B',
+                            600: '#D97706',
+                            700: '#B45309',
+                        },
+                        teal: {
+                            50: '#F0FDF4',
+                            100: '#CCFBF1',
+                            500: '#14B8A6',
+                            600: '#0D9488',
+                            700: '#0F766E',
+                        },
+                        sand: {
+                            50: '#FAF8F5',
+                            100: '#F3F0EA',
+                            200: '#E5E0D8',
+                            800: '#1F2937',
+                            900: '#0F172A',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Custom Design System Stylesheet -->
+    <link href="{{ url_for('static', filename='css/design_system.css') }}" rel="stylesheet">
 </head>
 
-<body class="bg-gray-50 text-gray-900 min-h-screen flex flex-col">
+<body class="bg-sand-50 dark:bg-sand-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200">
 
-    <!-- Navbar -->
-    <header class="bg-white shadow-md">
-        <div class="max-w-6xl mx-auto flex justify-between items-center px-4 py-3 container">
-            <!-- Logo/Brand -->
-            <h1 class="text-xl md:text-2xl font-bold text-blue-600 tracking-tight">
-                <a href="{{ url_for('main.home') }}">Sahayak</a>
-            </h1>
-
-            <!-- Actions -->
-            <div class="flex items-center space-x-3 flex-wrap gap-y-2">
-                <!-- Language Toggle -->
-                <button onclick="toggleLanguage()"
-                    class="px-3 py-1.5 text-sm font-medium bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition bg-blue button">
-                    हिंदी / English
-                </button>
-
-                <!-- Create Job Button -->
-                <a href="{{ url_for('make_jobs.make_jobs') }}"
-                    class="px-3 py-1.5 text-sm font-medium bg-green-600 text-white rounded-lg hover:bg-green-700 transition bg-green button">
-                    + Create Job
-                </a>
-
-                <!-- My Jobs Button -->
-                <a href="{{ url_for('profile.profile') }}"
-                    class="px-3 py-1.5 text-sm font-medium bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition bg-yellow button">
-                    My Profile
-                </a>
-
-                <!-- Saved Jobs Button -->
-                <a href="{{ url_for('saved.saved_jobs') }}"
-                    class="px-3 py-1.5 text-sm font-medium bg-pink-500 text-white rounded-lg hover:bg-pink-600 transition button">
-                    ♥ Saved
-                </a>
-
-                <!-- Dashboard Button -->
-                <a href="{{ url_for('dashboard.dashboard') }}"
-                    class="px-3 py-1.5 text-sm font-medium bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition button">
-                    📊 Dashboard
-                </a>
-
-                <!-- Career Growth Button -->
-                <a href="{{ url_for('career.career_growth_page') }}"
-                    class="px-3 py-1.5 text-sm font-medium bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition font-semibold shadow-sm flex items-center space-x-1">
-                    <span>🚀 Career Growth</span>
+    <!-- Global Header / Navigation -->
+    <header class="sk-header border-b border-sand-200 dark:border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            
+            <!-- Brand Logo & Tagline -->
+            <div class="flex items-center gap-3">
+                <a href="{{ url_for('main.home') }}" class="flex items-center gap-2 group">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-saffron-600 to-amber-500 text-white flex items-center justify-center font-black text-xl shadow-md group-hover:scale-105 transition-transform">
+                        SB
+                    </div>
+                    <div>
+                        <span class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight flex items-center gap-1.5">
+                            SkillBridge
+                            <span class="hidden sm:inline-block px-2 py-0.5 text-[10px] uppercase font-bold tracking-wider rounded-md bg-saffron-100 text-saffron-700 dark:bg-saffron-600/20 dark:text-saffron-500 border border-saffron-500/20">
+                                AI Jobs
+                            </span>
+                        </span>
+                        <p class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 -mt-1 hidden sm:block" data-en="Bridging Skills to Opportunity" data-hi="कौशल से अवसर तक सहभागिता">
+                            Bridging Skills to Opportunity
+                        </p>
+                    </div>
                 </a>
             </div>
+
+            <!-- Desktop Actions & Nav Links -->
+            <div class="hidden lg:flex items-center space-x-2">
+                <!-- Navigation Items -->
+                <a href="{{ url_for('main.home') }}" class="px-3 py-2 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:text-saffron-600 dark:hover:text-saffron-500 transition-colors flex items-center gap-1.5" data-en="Find Jobs" data-hi="नौकरियां खोजें">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    Find Jobs
+                </a>
+                <a href="{{ url_for('career.career_growth_page') }}" class="px-3 py-2 text-sm font-bold text-teal-700 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/50 rounded-lg hover:bg-teal-100 transition-colors flex items-center gap-1.5 border border-teal-500/20" data-en="🚀 Career Growth" data-hi="🚀 करियर प्रगति">
+                    🚀 Career Growth
+                </a>
+                <a href="{{ url_for('saved.saved_jobs') }}" class="px-3 py-2 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:text-saffron-600 transition-colors flex items-center gap-1.5" data-en="Saved Jobs" data-hi="सहेजी गई नौकरियां">
+                    ♥ Saved
+                </a>
+                <a href="{{ url_for('profile.profile') }}" class="px-3 py-2 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:text-saffron-600 transition-colors" data-en="My Profile" data-hi="मेरी प्रोफ़ाइल">
+                    My Profile
+                </a>
+            </div>
+
+            <!-- Global Tools: Lang Switcher + Dark Toggle + Employer CTA -->
+            <div class="flex items-center gap-2">
+                <!-- Language Toggle -->
+                <div class="bg-sand-200 dark:bg-slate-800 p-0.5 rounded-lg flex items-center text-xs font-bold shadow-inner">
+                    <button onclick="switchLanguage('en')" data-lang-btn="en" class="px-2.5 py-1 rounded-md transition-all bg-amber-600 text-white">
+                        EN
+                    </button>
+                    <button onclick="switchLanguage('hi')" data-lang-btn="hi" class="px-2.5 py-1 rounded-md transition-all text-gray-700 dark:text-slate-300">
+                        हिंदी
+                    </button>
+                </div>
+
+                <!-- Theme Toggle Button -->
+                <button onclick="toggleTheme()" class="p-2 text-slate-600 dark:text-slate-300 hover:bg-sand-200 dark:hover:bg-slate-800 rounded-lg transition-colors" title="Toggle Theme">
+                    <svg class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                    <svg class="w-5 h-5 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+                </button>
+
+                <!-- Post Job CTA Button (Employer) -->
+                <a href="{{ url_for('make_jobs.make_jobs') }}" class="sk-btn sk-btn-primary py-2 px-3 text-sm shadow-md hidden sm:inline-flex" data-en="+ Post Job" data-hi="+ नौकरी पोस्ट करें">
+                    + Post Job
+                </a>
+
+                <!-- Mobile Hamburger Drawer Button -->
+                <button id="sk-drawer-btn" class="lg:hidden p-2 text-slate-700 dark:text-slate-200 hover:bg-sand-200 dark:hover:bg-slate-800 rounded-lg transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                </button>
+            </div>
+
         </div>
     </header>
 
-    <!-- Main Content -->
+    <!-- Mobile Navigation Drawer Overlay & Panel -->
+    <div id="sk-drawer-overlay" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden transition-opacity"></div>
+    <div id="sk-mobile-drawer" class="fixed top-0 right-0 w-80 max-w-[85vw] h-full bg-white dark:bg-slate-900 z-50 shadow-2xl transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col">
+        <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg bg-saffron-600 text-white font-black flex items-center justify-center text-sm">SB</div>
+                <span class="font-extrabold text-lg">SkillBridge</span>
+            </div>
+            <button id="sk-drawer-close" class="p-2 text-slate-500 hover:text-slate-900 dark:hover:text-white">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+        </div>
+        <div class="p-4 flex-1 space-y-3 overflow-y-auto">
+            <a href="{{ url_for('main.home') }}" class="block p-3 rounded-xl font-bold bg-sand-100 dark:bg-slate-800 text-slate-900 dark:text-white" data-en="🔍 Find Local Jobs" data-hi="🔍 स्थानीय नौकरियां खोजें">
+                🔍 Find Local Jobs
+            </a>
+            <a href="{{ url_for('career.career_growth_page') }}" class="block p-3 rounded-xl font-bold bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 border border-teal-500/20" data-en="🚀 Career Growth Dashboard" data-hi="🚀 करियर प्रगति डैशबोर्ड">
+                🚀 Career Growth Dashboard
+            </a>
+            <a href="{{ url_for('make_jobs.make_jobs') }}" class="block p-3 rounded-xl font-bold bg-saffron-50 dark:bg-saffron-950/60 text-saffron-700 dark:text-saffron-400 border border-saffron-500/20" data-en="+ Post a New Job" data-hi="+ नई नौकरी पोस्ट करें">
+                + Post a New Job
+            </a>
+            <a href="{{ url_for('profile.profile') }}" class="block p-3 rounded-xl font-semibold text-slate-700 dark:text-slate-300 hover:bg-sand-100 dark:hover:bg-slate-800" data-en="👤 My Profile" data-hi="👤 मेरी प्रोफ़ाइल">
+                👤 My Profile
+            </a>
+            <a href="{{ url_for('saved.saved_jobs') }}" class="block p-3 rounded-xl font-semibold text-slate-700 dark:text-slate-300 hover:bg-sand-100 dark:hover:bg-slate-800" data-en="♥ Saved Jobs" data-hi="♥ सहेजी गई नौकरियां">
+                ♥ Saved Jobs
+            </a>
+            <a href="{{ url_for('dashboard.dashboard') }}" class="block p-3 rounded-xl font-semibold text-slate-700 dark:text-slate-300 hover:bg-sand-100 dark:hover:bg-slate-800" data-en="📊 Employer Analytics" data-hi="📊 नियोक्ता विश्लेषण">
+                📊 Employer Analytics
+            </a>
+        </div>
+        <div class="p-4 border-t border-slate-200 dark:border-slate-800 text-center text-xs text-slate-500">
+            <p>SkillBridge — Bridging Skills to Opportunity</p>
+            <p class="mt-1 font-semibold text-saffron-600">Helpline: 1800-SKILL-BRIDGE</p>
+        </div>
+    </div>
+
+    <!-- Main Content Block -->
     <main class="flex-grow">
         {% block content %}{% endblock %}
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-gray-100 border-t mt-10">
-        <div class="max-w-6xl mx-auto px-4 py-6 text-center text-gray-600 text-sm">
-            © 2025 Sahayak. Built for local jobs in Chhattisgarh.
+    <!-- Voice Recording Dialog / Modal Overlay -->
+    <div id="sk-voice-modal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-md z-50 hidden items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-800 rounded-3xl p-8 max-w-md w-full shadow-2xl border border-slate-200 dark:border-slate-700 text-center relative animate-scale">
+            <button id="sk-close-voice-modal" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 dark:hover:text-white">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+            <div class="w-20 h-20 rounded-full bg-red-100 dark:bg-red-900/40 text-red-600 flex items-center justify-center mx-auto mb-4 sk-mic-recording shadow-lg">
+                <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
+            </div>
+            <h3 class="text-2xl font-black text-slate-900 dark:text-white mb-2" data-en="Listening..." data-hi="सुन रहे हैं...">
+                Listening...
+            </h3>
+            <p id="sk-voice-status" class="text-sm font-medium text-slate-600 dark:text-slate-300 mb-6" data-en="Speak your query (e.g., Electrician job in Raipur)" data-hi="अपनी बात कहें (जैसे, रायपुर में बिजली मिस्त्री नौकरी)">
+                Speak your query (e.g., Electrician job in Raipur)
+            </p>
+            <div class="flex justify-center items-end gap-1.5 h-8 mb-4">
+                <div class="sk-wave-bar"></div>
+                <div class="sk-wave-bar"></div>
+                <div class="sk-wave-bar"></div>
+                <div class="sk-wave-bar"></div>
+                <div class="sk-wave-bar"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Global Footer -->
+    <footer class="bg-white dark:bg-slate-900 border-t border-sand-200 dark:border-slate-800 mt-16 transition-colors">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <!-- Brand Info -->
+                <div class="md:col-span-2 space-y-4">
+                    <div class="flex items-center gap-2">
+                        <div class="w-9 h-9 rounded-xl bg-saffron-600 text-white font-black flex items-center justify-center text-lg">SB</div>
+                        <span class="text-xl font-black tracking-tight text-slate-900 dark:text-white">SkillBridge</span>
+                    </div>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 max-w-sm" data-en="Empowering India's blue-collar workforce through voice-first AI matching, verified employers, and transparent daily wages." data-hi="आवाज़ आधारित AI मिलान, सत्यापित नियोक्ताओं और पारदर्शी दैनिक मजदूरी के माध्यम से भारत के वर्कफ़ोर्स को सशक्त बनाना।">
+                        Empowering India's blue-collar workforce through voice-first AI matching, verified employers, and transparent daily wages.
+                    </p>
+                    <div class="flex items-center gap-3 pt-2">
+                        <span class="sk-badge sk-badge-verified">✓ Verified Employers</span>
+                        <span class="sk-badge sk-badge-saffron">🎙 Voice Native</span>
+                    </div>
+                </div>
+
+                <!-- Quick Job Categories -->
+                <div>
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4" data-en="Popular Trades" data-hi="लोकप्रिय व्यापार">Popular Trades</h4>
+                    <ul class="space-y-2 text-sm font-medium text-slate-600 dark:text-slate-400">
+                        <li><a href="{{ url_for('main.home', category='electrician') }}" class="hover:text-saffron-600">⚡ Electricians (बिजली मिस्त्री)</a></li>
+                        <li><a href="{{ url_for('main.home', category='plumbing') }}" class="hover:text-saffron-600">🚰 Plumbers (प्लंबर)</a></li>
+                        <li><a href="{{ url_for('main.home', category='painting') }}" class="hover:text-saffron-600">🎨 Painters (पेंटर)</a></li>
+                        <li><a href="{{ url_for('main.home', category='carpentry') }}" class="hover:text-saffron-600">🪚 Carpenters (बढ़ई)</a></li>
+                    </ul>
+                </div>
+
+                <!-- Support & Helpline -->
+                <div>
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-4" data-en="Support & Trust" data-hi="सहायता और विश्वास">Support & Trust</h4>
+                    <p class="text-sm font-semibold text-slate-800 dark:text-slate-200" data-en="24/7 Worker Helpline:" data-hi="24/7 कार्यकर्ता हेल्पलाइन:">24/7 Worker Helpline:</p>
+                    <p class="text-lg font-black text-saffron-600 my-1">1800-SKILL-BRIDGE</p>
+                    <p class="text-xs text-slate-500" data-en="Free toll-free assistance in Hindi & regional languages." data-hi="हिंदी और क्षेत्रीय भाषाओं में मुफ्त टोल-फ्री सहायता।">
+                        Free toll-free assistance in Hindi & regional languages.
+                    </p>
+                </div>
+            </div>
+
+            <div class="border-t border-sand-200 dark:border-slate-800 mt-10 pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
+                <p>© 2026 SkillBridge. Bridging Skills to Opportunity across India.</p>
+                <div class="flex gap-4">
+                    <a href="#" class="hover:underline">Privacy Policy</a>
+                    <a href="#" class="hover:underline">Worker Rights</a>
+                    <a href="#" class="hover:underline">Employer Terms</a>
+                </div>
+            </div>
         </div>
     </footer>
 
+    <!-- App JavaScript -->
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 

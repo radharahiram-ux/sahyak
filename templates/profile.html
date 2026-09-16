@@ -1,50 +1,99 @@
 {% extends "base.html" %}
+{% block title %}Worker Profile & My Postings - SkillBridge{% endblock %}
+
 {% block content %}
-<div class="max-w-5xl mx-auto px-4 py-10">
+<div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
 
-    <!-- Profile Header -->
-    <div class="flex items-center space-x-6 mb-10">
-        <!-- Profile Picture -->
-        <img src="{{ url_for('static', filename='images/other.jpg') }}" alt="Profile Picture"
-            class="w-24 h-24 rounded-full object-cover border-2 border-blue-500">
+    <!-- Worker Profile Banner Card -->
+    <div class="sk-card p-6 sm:p-8 relative overflow-hidden">
+        <!-- Ambient Decorative Top Bar -->
+        <div class="absolute top-0 left-0 right-0 h-3 bg-gradient-to-r from-saffron-500 via-amber-500 to-teal-500"></div>
 
-        <!-- Name and Skills -->
-        <div>
-            <h1 class="text-3xl font-bold text-gray-800 my-2">Hi User</h1>
-            <p class="text-gray-600">Location: Mumbai, India</p>
-            <p class="text-gray-600">Phone: +91 98765 43210</p>
-            <div class="mt-2 flex flex-wrap gap-2">
-            <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">
-                Construction
-            </span>
+        <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6 pt-2">
+            <!-- Profile Avatar -->
+            <div class="relative flex-shrink-0">
+                <img src="{{ url_for('static', filename='images/other.jpg') }}" alt="User Avatar"
+                     class="w-28 h-28 rounded-full object-cover border-4 border-white dark:border-slate-800 shadow-xl">
+                <span class="absolute bottom-1 right-1 w-6 h-6 rounded-full bg-emerald-500 text-white text-xs font-bold flex items-center justify-center border-2 border-white" title="Verified Worker">✓</span>
+            </div>
+
+            <!-- Profile Details -->
+            <div class="flex-1 text-center sm:text-left space-y-2">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div>
+                        <h1 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white">Ramesh Kumar</h1>
+                        <p class="text-sm font-semibold text-slate-500">Senior Industrial Electrician • 5+ Yrs Exp</p>
+                    </div>
+
+                    <button onclick="showToast('Profile editing modal opened', 'info')" class="sk-btn sk-btn-outline py-2 px-4 text-xs font-bold self-center sm:self-start">
+                        ✏️ Edit Profile
+                    </button>
+                </div>
+
+                <div class="flex flex-wrap justify-center sm:justify-start gap-3 text-xs font-medium text-slate-600 dark:text-slate-300 pt-1">
+                    <span>📍 Location: <strong>Mumbai / Raipur</strong></span>
+                    <span>•</span>
+                    <span>📞 Phone: <strong>+91 98765 43210</strong></span>
+                    <span>•</span>
+                    <span class="text-amber-500 font-bold">★ 4.9 Rating (38 Reviews)</span>
+                </div>
+
+                <!-- Skill Badges -->
+                <div class="flex flex-wrap justify-center sm:justify-start gap-2 pt-2">
+                    <span class="sk-tag">⚡ Industrial Wiring</span>
+                    <span class="sk-tag">🚰 Pipe Fitting</span>
+                    <span class="sk-tag">☀️ Solar Installation</span>
+                    <span class="sk-badge sk-badge-verified">Verified Aadhaar</span>
+                </div>
+            </div>
         </div>
     </div>
-</div>
 
-<!-- My Jobs -->
-<h2 class="text-2xl font-semibold text-gray-800 ml-20 mb-6">My Jobs</h2>
-
-{% if jobs %}
-<div class="space-y-4 px-20">
-    {% for job in jobs %}
-    <div class="bg-white shadow rounded-xl p-6 border-2 border-blue-400 flex justify-between items-center">
-        <div>
-            <h3 class="text-xl font-semibold">{{ job.title }}</h3>
-            <p class="text-gray-600">{{ job.category }} | {{ job.location }}</p>
-            <p class="text-gray-700">{{ job.description }}</p>
-            <p class="text-green-600 font-medium">Salary: {{ job.salary }}</p>
+    <!-- Active Postings / Saved Jobs Header Section -->
+    <div class="space-y-4">
+        <div class="flex items-center justify-between border-b border-sand-200 dark:border-slate-800 pb-3">
+            <h2 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white flex items-center gap-2">
+                📂 Posted Jobs & Activity
+            </h2>
+            <a href="{{ url_for('make_jobs.make_jobs') }}" class="sk-btn sk-btn-primary py-2 px-3 text-xs font-bold">
+                + Create New Job
+            </a>
         </div>
-        <form method="POST" class="ml-4">
-            <input type="hidden" name="job_id" value="{{ job.id }}">
-            <button type="submit" class="px-3 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
-                Delete
-            </button>
-        </form>
+
+        {% if jobs %}
+        <div class="space-y-4">
+            {% for job in jobs %}
+            <div class="sk-card p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div class="space-y-1">
+                    <div class="flex items-center gap-2">
+                        <span class="sk-badge sk-badge-saffron">{{ job.category }}</span>
+                        <span class="text-xs text-slate-400">ID: #{{ job.id }}</span>
+                    </div>
+                    <h3 class="text-lg font-extrabold text-slate-900 dark:text-white">{{ job.title }}</h3>
+                    <p class="text-xs text-slate-500">📍 {{ job.location }} | 💰 Salary: <strong class="text-saffron-600">{{ job.salary }}</strong></p>
+                </div>
+
+                <form method="POST" class="flex-shrink-0">
+                    <input type="hidden" name="job_id" value="{{ job.id }}">
+                    <button type="submit" class="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-red-50 dark:bg-red-950/50 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-900 text-xs font-bold hover:bg-red-600 hover:text-white transition-all">
+                        🗑 Delete Listing
+                    </button>
+                </form>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="sk-card p-10 text-center space-y-3">
+            <div class="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center mx-auto text-xl">
+                📝
+            </div>
+            <p class="text-sm font-semibold text-slate-600 dark:text-slate-300">You have no active job postings.</p>
+            <a href="{{ url_for('make_jobs.make_jobs') }}" class="sk-btn sk-btn-primary inline-flex text-xs">
+                Post Your First Job Now
+            </a>
+        </div>
+        {% endif %}
     </div>
-    {% endfor %}
-</div>
-{% else %}
-<p class="text-gray-700">You have no jobs posted.</p>
-{% endif %}
+
 </div>
 {% endblock %}

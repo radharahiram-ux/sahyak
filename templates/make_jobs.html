@@ -1,77 +1,170 @@
 {% extends "base.html" %}
-{% block title %}Post a Job - Sahayak{% endblock %}
+{% block title %}Post a Job - SkillBridge Employer Hub{% endblock %}
 
 {% block content %}
-<div class="max-w-2xl mx-auto px-4 py-10">
+<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
 
-    <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">
-        Post Your Job
-    </h1>
+    <!-- Header Title & Tagline -->
+    <div class="text-center space-y-2">
+        <span class="sk-badge sk-badge-saffron">Employer Portal</span>
+        <h1 class="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight" data-en="Post a New Job Opening" data-hi="नई नौकरी पोस्ट करें">
+            Post a New Job Opening
+        </h1>
+        <p class="text-sm text-slate-500 max-w-md mx-auto" data-en="Connect with verified electricians, plumbers, drivers, and painters in minutes." data-hi="कुछ ही मिनटों में सत्यापित बिजली मिस्त्री, प्लंबर, ड्राइवर और पेंटर से जुड़ें।">
+            Connect with verified electricians, plumbers, drivers, and painters in minutes.
+        </p>
+    </div>
 
-    <form method="POST" action="{{ url_for('make_jobs.make_jobs') }}"
-        class="bg-white shadow-lg rounded-xl p-6 space-y-5 border">
+    <!-- Step Progress Bar Indicator -->
+    <div class="sk-card p-4 flex items-center justify-between text-xs font-bold text-slate-600 dark:text-slate-300">
+        <div class="flex items-center gap-2 text-saffron-600">
+            <span class="w-6 h-6 rounded-full bg-saffron-600 text-white flex items-center justify-center text-xs">1</span>
+            <span>Job Details</span>
+        </div>
+        <div class="h-0.5 flex-1 mx-4 bg-saffron-200 dark:bg-slate-700"></div>
+        <div class="flex items-center gap-2 text-slate-400">
+            <span class="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-xs">2</span>
+            <span>Pay & Location</span>
+        </div>
+        <div class="h-0.5 flex-1 mx-4 bg-slate-200 dark:bg-slate-700"></div>
+        <div class="flex items-center gap-2 text-slate-400">
+            <span class="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-xs">3</span>
+            <span>Contact & Publish</span>
+        </div>
+    </div>
 
-        <!-- Job Title -->
-        <div>
-            <label class="block font-medium text-gray-700 mb-1">Job Title</label>
-            <input type="text" name="title" required
-                class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+    <!-- Employer Posting Form Card -->
+    <form method="POST" action="{{ url_for('make_jobs.make_jobs') }}" class="sk-card p-6 sm:p-10 space-y-8">
+
+        <!-- 1. Visual Trade Category Picker Grid -->
+        <div class="space-y-3">
+            <label class="block text-sm font-bold uppercase tracking-wider text-slate-700 dark:text-slate-200">
+                Select Trade Category <span class="text-red-500">*</span>
+            </label>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                <label class="cursor-pointer">
+                    <input type="radio" name="category" value="electrician" required class="peer sr-only">
+                    <div class="p-3 rounded-2xl border-2 border-slate-200 dark:border-slate-700 peer-checked:border-saffron-600 peer-checked:bg-saffron-50 dark:peer-checked:bg-saffron-950/40 text-center transition-all">
+                        <span class="text-2xl block mb-1">⚡</span>
+                        <span class="font-bold text-xs text-slate-800 dark:text-white">Electrician</span>
+                    </div>
+                </label>
+
+                <label class="cursor-pointer">
+                    <input type="radio" name="category" value="plumbing" class="peer sr-only">
+                    <div class="p-3 rounded-2xl border-2 border-slate-200 dark:border-slate-700 peer-checked:border-saffron-600 peer-checked:bg-saffron-50 dark:peer-checked:bg-saffron-950/40 text-center transition-all">
+                        <span class="text-2xl block mb-1">🚰</span>
+                        <span class="font-bold text-xs text-slate-800 dark:text-white">Plumber</span>
+                    </div>
+                </label>
+
+                <label class="cursor-pointer">
+                    <input type="radio" name="category" value="painting" class="peer sr-only">
+                    <div class="p-3 rounded-2xl border-2 border-slate-200 dark:border-slate-700 peer-checked:border-saffron-600 peer-checked:bg-saffron-50 dark:peer-checked:bg-saffron-950/40 text-center transition-all">
+                        <span class="text-2xl block mb-1">🎨</span>
+                        <span class="font-bold text-xs text-slate-800 dark:text-white">Painter</span>
+                    </div>
+                </label>
+
+                <label class="cursor-pointer">
+                    <input type="radio" name="category" value="carpentry" class="peer sr-only">
+                    <div class="p-3 rounded-2xl border-2 border-slate-200 dark:border-slate-700 peer-checked:border-saffron-600 peer-checked:bg-saffron-50 dark:peer-checked:bg-saffron-950/40 text-center transition-all">
+                        <span class="text-2xl block mb-1">🪚</span>
+                        <span class="font-bold text-xs text-slate-800 dark:text-white">Carpenter</span>
+                    </div>
+                </label>
+
+                <label class="cursor-pointer">
+                    <input type="radio" name="category" value="driver" class="peer sr-only">
+                    <div class="p-3 rounded-2xl border-2 border-slate-200 dark:border-slate-700 peer-checked:border-saffron-600 peer-checked:bg-saffron-50 dark:peer-checked:bg-saffron-950/40 text-center transition-all">
+                        <span class="text-2xl block mb-1">🚗</span>
+                        <span class="font-bold text-xs text-slate-800 dark:text-white">Driver</span>
+                    </div>
+                </label>
+
+                <label class="cursor-pointer">
+                    <input type="radio" name="category" value="other" class="peer sr-only">
+                    <div class="p-3 rounded-2xl border-2 border-slate-200 dark:border-slate-700 peer-checked:border-saffron-600 peer-checked:bg-saffron-50 dark:peer-checked:bg-saffron-950/40 text-center transition-all">
+                        <span class="text-2xl block mb-1">🔧</span>
+                        <span class="font-bold text-xs text-slate-800 dark:text-white">Other Trade</span>
+                    </div>
+                </label>
+            </div>
         </div>
 
-        <!-- Employer -->
-        <div>
-            <label class="block font-medium text-gray-700 mb-1">Employer</label>
-            <input type="text" name="employer" required
-                class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+        <!-- Job Title Input -->
+        <div class="space-y-2">
+            <label class="block text-sm font-bold text-slate-700 dark:text-slate-200">
+                Job Title <span class="text-red-500">*</span>
+            </label>
+            <input type="text" name="title" required placeholder="e.g. Senior Wiring Electrician Needed for Site" class="sk-input">
         </div>
 
-        <!-- Category -->
-        <div>
-            <label class="block font-medium text-gray-700 mb-1">Category</label>
-            <select name="category" required
-                class="w-full border border-gray-300 rounded-lg px-3 py-2 bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                <option value="" disabled selected>Select a category</option>
-                <option value="painting">Painting</option>
-                <option value="plumbing">Plumbing</option>
-                <option value="electrician">Electrician</option>
-                <option value="carpentry">Carpentry</option>
-                <option value="other">Other</option>
-            </select>
+        <!-- Employer / Business Name -->
+        <div class="space-y-2">
+            <label class="block text-sm font-bold text-slate-700 dark:text-slate-200">
+                Employer / Company Name <span class="text-red-500">*</span>
+            </label>
+            <input type="text" name="employer" required placeholder="e.g. Apex Electricals / Rajesh Sharma" class="sk-input">
         </div>
 
-        <!-- Location -->
-        <div>
-            <label class="block font-medium text-gray-700 mb-1">Location</label>
-            <input type="text" name="location" required
-                class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+        <!-- Wage Presets & Input -->
+        <div class="space-y-3">
+            <label class="block text-sm font-bold text-slate-700 dark:text-slate-200">
+                Salary / Daily Wage Offer <span class="text-red-500">*</span>
+            </label>
+            <div class="flex flex-wrap gap-2 mb-2">
+                <button type="button" onclick="document.getElementById('salary-input').value='₹600 / day'" class="px-3 py-1.5 rounded-xl border border-slate-300 dark:border-slate-700 text-xs font-bold hover:border-saffron-600 transition-colors">₹600 / day</button>
+                <button type="button" onclick="document.getElementById('salary-input').value='₹850 / day'" class="px-3 py-1.5 rounded-xl border border-slate-300 dark:border-slate-700 text-xs font-bold hover:border-saffron-600 transition-colors">₹850 / day</button>
+                <button type="button" onclick="document.getElementById('salary-input').value='₹18,000 / month'" class="px-3 py-1.5 rounded-xl border border-slate-300 dark:border-slate-700 text-xs font-bold hover:border-saffron-600 transition-colors">₹18,000 / month</button>
+            </div>
+            <input type="text" id="salary-input" name="salary" required placeholder="e.g. ₹700/day or ₹20,000/mo" class="sk-input">
         </div>
 
-        <!-- Salary -->
-        <div>
-            <label class="block font-medium text-gray-700 mb-1">Salary</label>
-            <input type="text" name="salary"
-                class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+        <!-- Location & Contact -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="space-y-2">
+                <label class="block text-sm font-bold text-slate-700 dark:text-slate-200">
+                    City / Location <span class="text-red-500">*</span>
+                </label>
+                <input type="text" name="location" required placeholder="e.g. Raipur, Pandri Market" class="sk-input">
+            </div>
+
+            <div class="space-y-2">
+                <label class="block text-sm font-bold text-slate-700 dark:text-slate-200">
+                    Phone Number for Calls <span class="text-red-500">*</span>
+                </label>
+                <input type="tel" name="phone" required placeholder="e.g. +91 98765 43210" class="sk-input">
+            </div>
         </div>
 
-        <!-- Phone -->
-        <div>
-            <label class="block font-medium text-gray-700 mb-1">Phone Number</label>
-            <input type="tel" name="phone" required
-                class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+        <!-- Work Site Photo Upload Dropzone (Demonstration UI) -->
+        <div class="space-y-2">
+            <label class="block text-sm font-bold text-slate-700 dark:text-slate-200">
+                Work Site Photo (Optional)
+            </label>
+            <div class="border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-2xl p-6 text-center hover:border-saffron-500 transition-colors cursor-pointer bg-sand-50 dark:bg-slate-800/40">
+                <div class="w-12 h-12 rounded-full bg-saffron-100 dark:bg-saffron-950 text-saffron-600 flex items-center justify-center mx-auto mb-2 text-xl">
+                    📷
+                </div>
+                <p class="text-xs font-bold text-slate-700 dark:text-slate-200">Click or drag photos of your workplace</p>
+                <p class="text-[11px] text-slate-400 mt-1">PNG, JPG up to 5MB. Builds worker trust.</p>
+            </div>
         </div>
 
-        <!-- Description -->
-        <div>
-            <label class="block font-medium text-gray-700 mb-1">Description</label>
-            <textarea name="description" rows="4" required
-                class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"></textarea>
+        <!-- Description Textarea -->
+        <div class="space-y-2">
+            <label class="block text-sm font-bold text-slate-700 dark:text-slate-200">
+                Detailed Job Description <span class="text-red-500">*</span>
+            </label>
+            <textarea name="description" rows="4" required placeholder="Specify timing, food/transport arrangements, tools needed..." class="sk-input"></textarea>
         </div>
 
-        <!-- Submit Button -->
-        <button type="submit"
-            class="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition">
-            Post Job
+        <!-- Submit CTA Button -->
+        <button type="submit" class="sk-btn sk-btn-primary w-full py-4 text-base shadow-xl rounded-2xl font-black">
+            🚀 Publish Job Listing Now
         </button>
+
     </form>
 
 </div>

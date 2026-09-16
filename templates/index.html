@@ -1,208 +1,298 @@
 {% extends "base.html" %}
+{% block title %}SkillBridge - Find Local Blue-Collar Jobs & Skilled Workers{% endblock %}
+
 {% block content %}
-<div class="max-w-6xl mx-auto px-4 py-10 container">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
 
-    <div class="text-center mb-10">
-        <button onclick="switchLanguage('en')"
-            class="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition">English</button>
-        <button onclick="switchLanguage('hi')"
-            class="px-4 py-2 bg-gray-200 text-gray-800 font-medium rounded-lg hover:bg-gray-300 transition">हिन्दी</button>
-    </div>
+    <!-- ═══ Hero Search Section ═══ -->
+    <div class="relative rounded-3xl bg-gradient-to-r from-slate-900 via-amber-950 to-slate-900 text-white p-6 sm:p-10 lg:p-12 overflow-hidden shadow-2xl border border-saffron-500/20">
+        <!-- Background Ambient Glow -->
+        <div class="absolute -right-16 -bottom-16 w-80 h-80 rounded-full bg-saffron-600/20 blur-3xl pointer-events-none"></div>
+        <div class="absolute -left-16 -top-16 w-80 h-80 rounded-full bg-teal-600/20 blur-3xl pointer-events-none"></div>
 
-    <h1 class="text-3xl md:text-4xl font-bold text-gray-800 text-center my-20 heading"
-        data-en="Find local jobs on Sahayak" data-hi="सहायक पर स्थानीय नौकरियां खोजें">
-        Find local jobs on Sahayak
-    </h1>
+        <div class="relative z-10 max-w-3xl mx-auto text-center space-y-6">
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-saffron-500/20 text-saffron-300 border border-saffron-500/30 text-xs font-bold uppercase tracking-wider">
+                <span>🎙 AI Voice Search Powered</span>
+                <span>•</span>
+                <span data-en="Multilingual India" data-hi="बहुभाषी भारत">Multilingual India</span>
+            </div>
 
-    <form class="flex flex-col sm:flex-row gap-3 justify-center mb-6 search-form" method="GET" id="search-form">
-        <div class="relative w-full sm:w-2/3">
-            <input type="text" name="search" id="search-input" value="{{ search }}"
-                placeholder="Search for jobs (painting, plumbing, etc.)"
-                data-en-placeholder="Search for jobs (painting, plumbing, etc.)"
-                data-hi-placeholder="नौकरी खोजें (पेंटिंग, प्लंबिंग, आदि)"
-                class="w-full px-4 py-2 pr-12 border-4 border-indigo-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm search-input">
-            <button type="button" id="voice-search-btn"
-                class="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer" title="Search with voice">
-                <svg class="w-6 h-6 text-gray-500 hover:text-blue-600 transition-colors" fill="none"
-                    stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z">
-                    </path>
-                </svg>
-            </button>
-        </div>
-        <button type="submit"
-            class="px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition button bg-blue"
-            data-en="Search" data-hi="खोजें">
-            Search
-        </button>
-    </form>
+            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight" data-en="Find Local Jobs with Your Voice" data-hi="अपनी आवाज से स्थानीय नौकरियां खोजें">
+                Find Local Jobs with Your Voice
+            </h1>
+            <p class="text-slate-300 text-base sm:text-lg max-w-xl mx-auto" data-en="Connect directly with verified employers in Hindi or English. Daily payouts, fair wages, zero agent fees." data-hi="हिंदी या अंग्रेजी में सत्यापित नियोक्ताओं से सीधे जुड़ें। दैनिक भुगतान, उचित मजदूरी, शून्य एजेंट शुल्क।">
+                Connect directly with verified employers in Hindi or English. Daily payouts, fair wages, zero agent fees.
+            </p>
 
-    <!-- Category / Location filters -->
-    <div class="flex flex-wrap gap-3 justify-center mb-10">
-        <select name="category" form="search-form" onchange="document.getElementById('search-form').submit()"
-            class="px-3 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white">
-            <option value="">All categories</option>
-            {% for cat in all_categories %}
-            <option value="{{ cat }}" {% if cat==category %}selected{% endif %}>{{ cat|capitalize }}</option>
-            {% endfor %}
-        </select>
-
-        <select name="location" form="search-form" onchange="document.getElementById('search-form').submit()"
-            class="px-3 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white">
-            <option value="">All locations</option>
-            {% for loc in all_locations %}
-            <option value="{{ loc }}" {% if loc==location %}selected{% endif %}>{{ loc }}</option>
-            {% endfor %}
-        </select>
-
-        {% if category or location %}
-        <a href="{{ url_for('main.home', search=search) }}"
-            class="px-3 py-2 text-sm text-gray-500 hover:text-gray-700 underline self-center">Clear filters</a>
-        {% endif %}
-    </div>
-
-    <div class="job-listings grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 job-grid">
-        {% for job in jobs %}
-        <div class="cursor-pointer border rounded-xl bg-white shadow hover:shadow-lg transition 
-                    overflow-hidden job-card" onclick="location.href='/job/{{ job.id }}'">
-
-            <div class="relative">
-                <img src="{{ url_for('static', filename='images/' ~ job.category ~ '.jpg') }}" alt="{{ job.category }}"
-                    class="w-full h-40 object-cover job-img">
-
-                <!-- Save / Unsave button -->
-                <form method="POST" action="{{ url_for('saved.toggle_save', job_id=job.id) }}"
-                    onsubmit="event.stopPropagation()" class="absolute top-2 right-2">
-                    <input type="hidden" name="next" value="{{ request.full_path }}">
-                    <button type="submit" onclick="event.stopPropagation()"
-                        title="{% if job.id in saved_ids %}Remove from saved{% else %}Save this job{% endif %}"
-                        class="bg-white/90 rounded-full w-9 h-9 flex items-center justify-center shadow hover:bg-white transition">
-                        {% if job.id in saved_ids %}
-                        <span class="text-red-500 text-lg">♥</span>
-                        {% else %}
-                        <span class="text-gray-400 text-lg">♡</span>
-                        {% endif %}
+            <!-- Main Hero Search Bar -->
+            <form id="search-form" method="GET" action="{{ url_for('main.home') }}" class="relative max-w-2xl mx-auto flex flex-col sm:flex-row gap-3 pt-2">
+                <div class="relative flex-1">
+                    <input type="text" name="search" id="search-input" value="{{ search }}"
+                        placeholder="Search jobs: Electrician, Plumber, Driver..."
+                        data-en="Search jobs: Electrician, Plumber, Driver..."
+                        data-hi="नौकरी खोजें: बिजली मिस्त्री, प्लंबर, ड्राइवर..."
+                        class="w-full pl-5 pr-14 py-4 rounded-2xl bg-white/95 dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 font-medium text-base shadow-lg border-2 border-transparent focus:border-saffron-500 focus:outline-none focus:ring-4 focus:ring-saffron-500/20 transition-all">
+                    
+                    <!-- Voice Mic Action Button -->
+                    <button type="button" id="voice-search-btn" title="Search with your voice"
+                        class="absolute right-2 top-2 bottom-2 px-3 rounded-xl bg-saffron-50 dark:bg-slate-700 text-saffron-600 dark:text-saffron-400 hover:bg-saffron-600 hover:text-white transition-all flex items-center justify-center">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
                     </button>
-                </form>
-            </div>
+                </div>
 
-            <div class="p-5 job-info">
-                <h3 class="text-xl font-semibold text-gray-800 mb-2 job-title" data-en="{{ job.title }}"
-                    data-hi="{{ job.title_hi }}">{{ job.title }}</h3>
-                <p class="text-gray-600 job-employer" data-en="{{ job.employer }}" data-hi="{{ job.employer_hi }}">{{
-                    job.employer }}</p>
-                <p class="text-gray-500 text-sm job-location" data-en="{{ job.location }}"
-                    data-hi="{{ job.location_hi }}">{{ job.location }}</p>
-                <p class="text-green-600 font-medium mt-2 job-salary" data-en="{{ job.salary }}"
-                    data-hi="{{ job.salary_hi }}">{{ job.salary }}</p>
+                <button type="submit" class="sk-btn sk-btn-primary py-4 px-8 text-base shadow-xl rounded-2xl flex-shrink-0" data-en="Search Jobs" data-hi="नौकरियां खोजें">
+                    Search Jobs
+                </button>
+            </form>
+
+            <!-- Quick Voice Helper Tags -->
+            <div class="flex flex-wrap justify-center items-center gap-2 text-xs font-semibold text-slate-400 pt-2">
+                <span>Popular Voice Queries:</span>
+                <button type="button" onclick="document.getElementById('search-input').value='Electrician Raipur'; document.getElementById('search-form').submit();" class="hover:text-saffron-400 underline">"Raipur Electrician"</button>
+                <span>•</span>
+                <button type="button" onclick="document.getElementById('search-input').value='Driver daily pay'; document.getElementById('search-form').submit();" class="hover:text-saffron-400 underline">"Driver Daily Pay"</button>
+                <span>•</span>
+                <button type="button" onclick="document.getElementById('search-input').value='Painter'; document.getElementById('search-form').submit();" class="hover:text-saffron-400 underline">"Painter Job"</button>
             </div>
         </div>
-        {% endfor %}
     </div>
 
-    {% if not jobs %}
-    <p class="text-center text-gray-500 mt-10">No jobs match your search/filters. Try clearing a filter.</p>
-    {% endif %}
+    <!-- ═══ Visual Job Categories Grid (Icon Heavy) ═══ -->
+    <div class="space-y-4">
+        <div class="flex items-center justify-between">
+            <div>
+                <h2 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight" data-en="Browse by Skill Category" data-hi="कौशल श्रेणी के अनुसार खोजें">
+                    Browse by Skill Category
+                </h2>
+                <p class="text-xs sm:text-sm text-slate-500" data-en="Tap any icon to view instant openings" data-hi="तत्काल उपलब्धियां देखने के लिए किसी भी आइकन पर टैप करें">
+                    Tap any icon to view instant openings
+                </p>
+            </div>
+            {% if category %}
+            <a href="{{ url_for('main.home') }}" class="text-xs font-bold text-saffron-600 hover:underline">View All Categories ✕</a>
+            {% endif %}
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-3">
+            <a href="{{ url_for('main.home', category='electrician') }}" class="sk-cat-card {% if category=='electrician' %}active{% endif %}">
+                <div class="sk-cat-icon">⚡</div>
+                <span class="font-bold text-sm text-slate-800 dark:text-slate-100" data-en="Electrician" data-hi="बिजली मिस्त्री">Electrician</span>
+                <span class="text-[11px] font-semibold text-slate-400">⚡ 45+ Jobs</span>
+            </a>
+
+            <a href="{{ url_for('main.home', category='plumbing') }}" class="sk-cat-card {% if category=='plumbing' %}active{% endif %}">
+                <div class="sk-cat-icon">🚰</div>
+                <span class="font-bold text-sm text-slate-800 dark:text-slate-100" data-en="Plumber" data-hi="प्लंबर">Plumber</span>
+                <span class="text-[11px] font-semibold text-slate-400">🚰 32+ Jobs</span>
+            </a>
+
+            <a href="{{ url_for('main.home', category='painting') }}" class="sk-cat-card {% if category=='painting' %}active{% endif %}">
+                <div class="sk-cat-icon">🎨</div>
+                <span class="font-bold text-sm text-slate-800 dark:text-slate-100" data-en="Painter" data-hi="पेंटर">Painter</span>
+                <span class="text-[11px] font-semibold text-slate-400">🎨 28+ Jobs</span>
+            </a>
+
+            <a href="{{ url_for('main.home', category='carpentry') }}" class="sk-cat-card {% if category=='carpentry' %}active{% endif %}">
+                <div class="sk-cat-icon">🪚</div>
+                <span class="font-bold text-sm text-slate-800 dark:text-slate-100" data-en="Carpenter" data-hi="बढ़ई">Carpenter</span>
+                <span class="text-[11px] font-semibold text-slate-400">🪚 19+ Jobs</span>
+            </a>
+
+            <a href="{{ url_for('main.home', category='driver') }}" class="sk-cat-card {% if category=='driver' %}active{% endif %}">
+                <div class="sk-cat-icon">🚗</div>
+                <span class="font-bold text-sm text-slate-800 dark:text-slate-100" data-en="Driver" data-hi="ड्राइवर">Driver</span>
+                <span class="text-[11px] font-semibold text-slate-400">🚗 50+ Jobs</span>
+            </a>
+
+            <a href="{{ url_for('main.home', category='gardening') }}" class="sk-cat-card {% if category=='gardening' %}active{% endif %}">
+                <div class="sk-cat-icon">🌿</div>
+                <span class="font-bold text-sm text-slate-800 dark:text-slate-100" data-en="Gardener" data-hi="माली">Gardener</span>
+                <span class="text-[11px] font-semibold text-slate-400">🌿 14+ Jobs</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- ═══ Responsive Main Content: Sidebar Filters (Desktop) + Job Cards Grid ═══ -->
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 pt-4">
+
+        <!-- Desktop Sidebar Filters -->
+        <div class="hidden lg:block space-y-6">
+            <div class="sk-card p-6 space-y-6">
+                <div class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4">
+                    <h3 class="font-black text-lg text-slate-900 dark:text-white flex items-center gap-2">
+                        <svg class="w-5 h-5 text-saffron-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"/></svg>
+                        Filter Jobs
+                    </h3>
+                    {% if category or location or search %}
+                    <a href="{{ url_for('main.home') }}" class="text-xs font-bold text-saffron-600 hover:underline">Reset</a>
+                    {% endif %}
+                </div>
+
+                <!-- Category Selector Filter -->
+                <div class="space-y-2">
+                    <label class="text-xs font-bold uppercase tracking-wider text-slate-500">Category</label>
+                    <select name="category" form="search-form" onchange="document.getElementById('search-form').submit()" class="sk-input text-sm">
+                        <option value="">All Categories</option>
+                        {% for cat in all_categories %}
+                        <option value="{{ cat }}" {% if cat==category %}selected{% endif %}>{{ cat|capitalize }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Location Filter -->
+                <div class="space-y-2">
+                    <label class="text-xs font-bold uppercase tracking-wider text-slate-500">Location</label>
+                    <select name="location" form="search-form" onchange="document.getElementById('search-form').submit()" class="sk-input text-sm">
+                        <option value="">All Locations</option>
+                        {% for loc in all_locations %}
+                        <option value="{{ loc }}" {% if loc==location %}selected{% endif %}>{{ loc }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Verified Employer Toggle -->
+                <div class="pt-2">
+                    <label class="flex items-center gap-3 cursor-pointer p-3 rounded-xl bg-sand-100 dark:bg-slate-800/60 border border-sand-200 dark:border-slate-700">
+                        <input type="checkbox" checked class="w-4 h-4 rounded text-saffron-600 focus:ring-saffron-500">
+                        <div>
+                            <span class="text-xs font-bold text-slate-900 dark:text-white block">Verified Employers Only</span>
+                            <span class="text-[10px] text-slate-500">Guaranteed daily payout</span>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- Trust Signal Card -->
+                <div class="p-4 rounded-xl bg-teal-50 dark:bg-teal-950/40 border border-teal-500/30 text-teal-900 dark:text-teal-200 text-xs space-y-2">
+                    <div class="flex items-center gap-2 font-bold text-teal-700 dark:text-teal-400">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                        SkillBridge Guarantee
+                    </div>
+                    <p>All jobs listed feature verified phone contacts and transparent wage displays.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Job Listings Grid (3 Columns Desktop, 1 Column Mobile) -->
+        <div class="lg:col-span-3 space-y-6">
+
+            <!-- Mobile Active Filter Pills -->
+            <div class="flex lg:hidden items-center justify-between gap-2 overflow-x-auto pb-2">
+                <span class="text-xs font-bold text-slate-500 whitespace-nowrap">Filter:</span>
+                <select name="category" form="search-form" onchange="document.getElementById('search-form').submit()" class="sk-input py-1.5 px-3 text-xs w-auto">
+                    <option value="">Category: All</option>
+                    {% for cat in all_categories %}
+                    <option value="{{ cat }}" {% if cat==category %}selected{% endif %}>{{ cat|capitalize }}</option>
+                    {% endfor %}
+                </select>
+                <select name="location" form="search-form" onchange="document.getElementById('search-form').submit()" class="sk-input py-1.5 px-3 text-xs w-auto">
+                    <option value="">Location: All</option>
+                    {% for loc in all_locations %}
+                    <option value="{{ loc }}" {% if loc==location %}selected{% endif %}>{{ loc }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Job Cards Container -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                {% for job in jobs %}
+                <div class="sk-card sk-card-hover flex flex-col justify-between cursor-pointer group" onclick="location.href='/job/{{ job.id }}'">
+                    
+                    <div>
+                        <!-- Image Container with Badges -->
+                        <div class="relative h-44 w-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
+                            <img src="{{ url_for('static', filename='images/' ~ job.category ~ '.jpg') }}" 
+                                 alt="{{ job.category }}"
+                                 onerror="this.src='{{ url_for('static', filename='images/other.jpg') }}'"
+                                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                            <div class="absolute inset-0 bg-gradient-to-t from-slate-900/70 via-transparent to-transparent"></div>
+
+                            <!-- Save Heart Toggle Button -->
+                            <form method="POST" action="{{ url_for('saved.toggle_save', job_id=job.id) }}"
+                                  onsubmit="event.stopPropagation()" class="absolute top-3 right-3 z-10">
+                                <input type="hidden" name="next" value="{{ request.full_path }}">
+                                <button type="submit" onclick="event.stopPropagation()"
+                                        class="w-9 h-9 rounded-full bg-white/90 dark:bg-slate-900/90 text-slate-700 dark:text-white flex items-center justify-center shadow-md hover:scale-110 transition-transform">
+                                    {% if job.id in saved_ids %}
+                                    <span class="text-red-500 text-lg">♥</span>
+                                    {% else %}
+                                    <span class="text-slate-400 text-lg">♡</span>
+                                    {% endif %}
+                                </button>
+                            </form>
+
+                            <!-- Verification Badge -->
+                            <div class="absolute top-3 left-3">
+                                <span class="sk-badge sk-badge-verified">✓ Verified Employer</span>
+                            </div>
+
+                            <!-- Category Overlay Tag -->
+                            <div class="absolute bottom-3 left-3 text-white">
+                                <span class="px-2.5 py-1 rounded-lg bg-slate-900/80 text-[11px] font-bold uppercase tracking-wider backdrop-blur-sm border border-white/20">
+                                    {{ job.category }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Card Information Body -->
+                        <div class="p-5 space-y-3">
+                            <div>
+                                <h3 class="text-lg font-extrabold text-slate-900 dark:text-white group-hover:text-saffron-600 transition-colors line-clamp-1" data-en="{{ job.title }}" data-hi="{{ job.title_hi }}">
+                                    {{ job.title }}
+                                </h3>
+                                <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 flex items-center gap-1 mt-0.5" data-en="{{ job.employer }}" data-hi="{{ job.employer_hi }}">
+                                    <span>🏢 {{ job.employer }}</span>
+                                    <span class="text-amber-500 font-bold">★ 4.8</span>
+                                </p>
+                            </div>
+
+                            <div class="flex items-center justify-between text-xs text-slate-600 dark:text-slate-300 font-medium">
+                                <span class="flex items-center gap-1" data-en="{{ job.location }}" data-hi="{{ job.location_hi }}">
+                                    📍 {{ job.location }}
+                                </span>
+                                <span class="text-teal-600 dark:text-teal-400 font-bold">● Active Now</span>
+                            </div>
+
+                            <!-- Transparent Wage Display -->
+                            <div class="p-3 rounded-xl bg-sand-100 dark:bg-slate-800/80 border border-sand-200 dark:border-slate-700 flex items-center justify-between">
+                                <span class="text-xs font-bold text-slate-500">Guaranteed Pay:</span>
+                                <span class="text-base font-black text-saffron-600 dark:text-saffron-400" data-en="{{ job.salary }}" data-hi="{{ job.salary_hi }}">
+                                    {{ job.salary }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Call Direct Quick Action Footer -->
+                    <div class="px-5 pb-5 pt-0">
+                        <a href="tel:{{ job.phone }}" onclick="event.stopPropagation()" class="w-full py-2.5 px-4 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-sm transition-all">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                            Call Employer Now
+                        </a>
+                    </div>
+
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Empty Search State -->
+            {% if not jobs %}
+            <div class="sk-card p-12 text-center space-y-4">
+                <div class="w-16 h-16 rounded-full bg-saffron-100 text-saffron-600 flex items-center justify-center mx-auto text-2xl">
+                    🔍
+                </div>
+                <h3 class="text-xl font-bold text-slate-900 dark:text-white" data-en="No jobs match your search" data-hi="आपकी खोज से कोई नौकरी मेल नहीं खाती">
+                    No jobs match your search
+                </h3>
+                <p class="text-sm text-slate-500 max-w-sm mx-auto" data-en="Try searching with voice, clearing category filters, or searching for nearby locations." data-hi="आवाज से खोजने, फ़िल्टर साफ़ करने या आस-पास के स्थानों की खोज करने का प्रयास करें।">
+                    Try searching with voice, clearing category filters, or searching for nearby locations.
+                </p>
+                <a href="{{ url_for('main.home') }}" class="sk-btn sk-btn-primary inline-flex">Clear All Filters</a>
+            </div>
+            {% endif %}
+
+        </div>
+
+    </div>
+
 </div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        // --- START: Voice Input Script ---
-        const searchForm = document.getElementById('search-form');
-        const searchInput = document.getElementById('search-input');
-        const voiceSearchBtn = document.getElementById('voice-search-btn');
-        const micIcon = voiceSearchBtn.querySelector('svg');
-
-        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-            console.warn("MediaRecorder is not supported by this browser.");
-            voiceSearchBtn.style.display = 'none';
-            return;
-        }
-
-        let mediaRecorder;
-        let audioChunks = [];
-        let isRecording = false;
-
-        voiceSearchBtn.addEventListener('click', async () => {
-            if (isRecording) {
-                mediaRecorder.stop();
-            } else {
-                try {
-                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                    mediaRecorder = new MediaRecorder(stream);
-
-                    mediaRecorder.onstart = () => {
-                        audioChunks = [];
-                        isRecording = true;
-                        micIcon.classList.add('text-red-500');
-                        searchInput.placeholder = 'Listening... Speak now!';
-                    };
-
-                    mediaRecorder.ondataavailable = event => {
-                        audioChunks.push(event.data);
-                    };
-
-                    mediaRecorder.onstop = async () => {
-                        isRecording = false;
-                        micIcon.classList.remove('text-red-500');
-                        searchInput.placeholder = 'Transcribing...';
-
-                        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-                        const formData = new FormData();
-                        formData.append('audio_data', audioBlob);
-
-                        try {
-                            const response = await fetch('/transcribe', {
-                                method: 'POST',
-                                body: formData
-                            });
-
-                            if (!response.ok) {
-                                throw new Error('Server error during transcription.');
-                            }
-
-                            const data = await response.json();
-                            if (data.transcript) {
-                                searchInput.value = data.transcript;
-                                searchForm.submit();
-                            } else {
-                                searchInput.placeholder = data.error || 'Transcription failed.';
-                            }
-                        } catch (error) {
-                            console.error('Error transcribing audio:', error);
-                            searchInput.placeholder = 'Error sending audio.';
-                        }
-                    };
-
-                    mediaRecorder.start();
-
-                } catch (err) {
-                    console.error('Error accessing microphone:', err);
-                    searchInput.placeholder = 'Microphone access denied.';
-                }
-            }
-        });
-        // --- END: Voice Input Script ---
-    });
-
-    // --- Language Switching Script ---
-    function switchLanguage(lang) {
-        const elementsToTranslate = document.querySelectorAll('[data-en]');
-
-        elementsToTranslate.forEach(el => {
-            const translation = (lang === 'hi') ? el.dataset.hi : el.dataset.en;
-            if (translation) {
-                el.innerText = translation;
-            }
-        });
-
-        const searchInput = document.getElementById('search-input');
-        if (lang === 'hi') {
-            searchInput.placeholder = searchInput.dataset.hiPlaceholder;
-        } else {
-            searchInput.placeholder = searchInput.dataset.enPlaceholder;
-        }
-    }
-</script>
 {% endblock %}
